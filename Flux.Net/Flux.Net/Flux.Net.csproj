@@ -16,9 +16,9 @@
 		<Authors></Authors>
 		<Company>FluxQuery.Net</Company>
 		<Product>FluxQuery.Net</Product>
-		<Version>1.0.3</Version>
-		<AssemblyVersion>1.0.3</AssemblyVersion>
-		<FileVersion>1.0.3</FileVersion>
+		<Version>1.0.4</Version>
+		<AssemblyVersion>1.0.4</AssemblyVersion>
+		<FileVersion>1.0.4</FileVersion>
 		<PackageProjectUrl>https://github.com/MalikRizwanBashir/Flux.Net</PackageProjectUrl>
 		<NeutralLanguage />
 		<PackageReleaseNotes>Initial release with basic timseries functions</PackageReleaseNotes>
