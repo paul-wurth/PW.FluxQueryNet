@@ -169,7 +169,7 @@ namespace Flux.Net
 
         public FluxQuery Sort(bool desc, params string[] columns)
         {
-            var boolean = FormattableString.Invariant($"{desc}");
+            var boolean = desc.ToString().ToLowerInvariant();
             sortRecords = $@"
 |> sort(columns: [{ string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; })) } ], desc: {boolean}) ";
             return this;
