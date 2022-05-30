@@ -27,7 +27,14 @@ namespace Flux.Net
 
         public FluxQuery(string dataSource, string retentionPolicy = "autogen")
         {
-            queryString.Append($@"from(bucket:""{dataSource}/{retentionPolicy}"") ");
+            if (string.IsNullOrEmpty(retentionPolicy))
+            {
+                queryString.Append($@"from(bucket:""{dataSource}"") ");
+            }
+            else
+            {
+                queryString.Append($@"from(bucket:""{dataSource}/{retentionPolicy}"") ");
+            }
         }
 
         #region time range
