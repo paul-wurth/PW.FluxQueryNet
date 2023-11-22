@@ -45,13 +45,13 @@ namespace Flux.Net
             if (end == null)
             {
                 queryString.Append("\n");
-                queryString.Append(@$"|> range(start: {Convert.ToString(start.Value, CultureInfo.InvariantCulture)}{startUnit})");
+                queryString.Append($@"|> range(start: {Convert.ToString(start.Value, CultureInfo.InvariantCulture)}{startUnit})");
             }
             else
             {
                 var endUnit = GetTimeUnit(start.Key);
                 queryString.Append("\n");
-                queryString.Append(@$"|> range(start: {Convert.ToString(start.Value, CultureInfo.InvariantCulture)}{startUnit}, stop: {Convert.ToString(end.Value, CultureInfo.InvariantCulture)}{endUnit}) ");
+                queryString.Append($@"|> range(start: {Convert.ToString(start.Value, CultureInfo.InvariantCulture)}{startUnit}, stop: {Convert.ToString(end.Value, CultureInfo.InvariantCulture)}{endUnit}) ");
             }
             return this;
         }
@@ -112,14 +112,14 @@ namespace Flux.Net
         private FluxQuery AbsoluteTimeRange(string start, string end)
         {
             queryString.Append("\n");
-            queryString.Append(@$"|> range(start: {start}, stop: {end}) ");
+            queryString.Append($@"|> range(start: {start}, stop: {end}) ");
             return this;
         }
 
         private FluxQuery AbsoluteTimeRange(string start)
         {
             queryString.Append("\n");
-            queryString.Append(@$"|> range(start: {start}) ");
+            queryString.Append($@"|> range(start: {start}) ");
             return this;
         }
         #endregion
@@ -146,7 +146,7 @@ namespace Flux.Net
 
         public FluxQuery Window(string interval, Action<Aggregates> filterAction = null)
         {
-            window = @$"window(every: {interval})";
+            window = $@"window(every: {interval})";
             if (filterAction != null)
             {
                 Aggregate = new Aggregates();
@@ -171,14 +171,14 @@ namespace Flux.Net
         public FluxQuery Sort(bool desc, params string[] columns)
         {
             var orderString = Convert.ToString(desc, CultureInfo.InvariantCulture).ToLowerInvariant();
-            sortRecords = @$"
+            sortRecords = $@"
 |> sort(columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ], desc: {orderString}) ";
             return this;
         }
 
         public FluxQuery Limit(int limit, int offset = 0)
         {
-            limitRecords = @$"
+            limitRecords = $@"
 |> limit(n: {limit}, offset: {offset}) ";
             return this;
         }
@@ -200,22 +200,22 @@ namespace Flux.Net
 
             if (!string.IsNullOrEmpty(m))
             {
-                filterQuery = @$"{filterQuery} r._measurement == ""{m}"" ";
+                filterQuery = $@"{filterQuery} r._measurement == ""{m}"" ";
             }
 
             if (!string.IsNullOrEmpty(select))
             {
-                filterQuery = @$"{filterQuery} {select}";
+                filterQuery = $@"{filterQuery} {select}";
             }
 
             if (!string.IsNullOrEmpty(filt))
             {
-                filterQuery = @$"{filterQuery} {filt}";
+                filterQuery = $@"{filterQuery} {filt}";
             }
             if (!string.IsNullOrEmpty(filterQuery))
             {
                 queryString.Append("\n");
-                queryString.Append(@$"|> filter(fn: (r) => {filterQuery})");
+                queryString.Append($@"|> filter(fn: (r) => {filterQuery})");
             }
 
             if (!string.IsNullOrEmpty(group))
@@ -229,7 +229,7 @@ namespace Flux.Net
             {
                 queryString.Append(fun);
                 queryString.Append("\n");
-                //queryString = @$"{queryString} 
+                //queryString = $@"{queryString} 
                 //                 {fun} ";
             }
 
@@ -237,7 +237,7 @@ namespace Flux.Net
             {
                 queryString.Append(window);
                 queryString.Append("\n");
-                //queryString = @$"{queryString} 
+                //queryString = $@"{queryString} 
                 //                 {window} ";
             }
 
@@ -245,7 +245,7 @@ namespace Flux.Net
             {
                 queryString.Append(aggr);
                 queryString.Append("\n");
-                //queryString = @$"{queryString} 
+                //queryString = $@"{queryString} 
                 //                 {aggr} ";
             }
 
@@ -253,7 +253,7 @@ namespace Flux.Net
             {
                 queryString.Append(sortRecords);
                 queryString.Append("\n");
-                //queryString = @$"{queryString} 
+                //queryString = $@"{queryString} 
                 //                 {sortRecords} ";
             }
 
@@ -261,7 +261,7 @@ namespace Flux.Net
             {
                 queryString.Append(limitRecords);
                 queryString.Append("\n");
-                //queryString = @$"{queryString} 
+                //queryString = $@"{queryString} 
                 //                 {limitRecords} ";
             }
 

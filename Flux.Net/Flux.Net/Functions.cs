@@ -14,14 +14,14 @@ namespace Flux.Net
 
         public Functions First()
         {
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> first() ";
             return this;
         }
 
         public Functions Last()
         {
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> last() ";
             return this;
         }
@@ -31,20 +31,20 @@ namespace Flux.Net
             string val;
             if (value.GetType() == typeof(string))
             {
-                val = @$"""{value}""";
+                val = $@"""{value}""";
             }
             else
             {
-                val = @$"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
+                val = $@"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
             }
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> fill(column: ""{column}"", value: {val}) ";
             return this;
         }
 
         public Functions FillPrevious(string column)
         {
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> fill(column: column: ""{column}"", usePrevious: true) ";
             return this;
         }
@@ -54,41 +54,41 @@ namespace Flux.Net
             string val;
             if (value.GetType() == typeof(string))
             {
-                val = @$"""{value}""";
+                val = $@"""{value}""";
             }
             else
             {
-                val = @$"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
+                val = $@"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
             }
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> fill(value: {val}) ";
             return this;
         }
 
         public Functions FillPrevious()
         {
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> fill(usePrevious: true) ";
             return this;
         }
 
         public Functions Unique(string column)
         {
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> unique(column: ""{column}"") ";
             return this;
         }
 
         public Functions Distinct(string column)
         {
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> distinct(column: ""{column}"") ";
             return this;
         }
 
         public Functions Group(params string[] columns)
         {
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> group(columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ]) ";
             return this;
         }
@@ -100,7 +100,7 @@ namespace Flux.Net
         /// <returns></returns>
         public Functions KeepColumns(params string[] columns)
         {
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> keep(columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ]) ";
             return this;
         }
@@ -112,7 +112,7 @@ namespace Flux.Net
         /// <returns></returns>
         public Functions DropColumns(params string[] columns)
         {
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> drop(columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ]) ";
             return this;
         }
@@ -127,12 +127,12 @@ namespace Flux.Net
         {
             if (columns != null && columns.Length > 0)
             {
-                _Functions = @$"{_Functions} 
+                _Functions = $@"{_Functions} 
 |> top(n:{n}, columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ]) ";
             }
             else
             {
-                _Functions = @$"{_Functions} 
+                _Functions = $@"{_Functions} 
 |> top(n:{n}) ";
             }
             return this;
@@ -148,12 +148,12 @@ namespace Flux.Net
         {
             if (columns != null && columns.Length > 0)
             {
-                _Functions = @$"{_Functions} 
+                _Functions = $@"{_Functions} 
 |> bottom(n:{n}, columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ]) ";
             }
             else
             {
-                _Functions = @$"{_Functions} 
+                _Functions = $@"{_Functions} 
 |> bottom(n:{n}) ";
             }
             return this;
@@ -170,13 +170,13 @@ namespace Flux.Net
             string val;
             if (value.GetType() == typeof(string))
             {
-                val = @$"""{value}""";
+                val = $@"""{value}""";
             }
             else
             {
-                val = @$"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
+                val = $@"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
             }
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> stateDuration(fn: (r) => r.{column} == {val}, column: ""{column}"") ";
             return this;
         }
@@ -192,13 +192,13 @@ namespace Flux.Net
             string val;
             if (value.GetType() == typeof(string))
             {
-                val = @$"""{value}""";
+                val = $@"""{value}""";
             }
             else
             {
-                val = @$"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
+                val = $@"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
             }
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> stateCount(fn: (r) => r.{column} == {val}, column: ""{column}"") ";
             return this;
         }
@@ -214,11 +214,11 @@ namespace Flux.Net
             if (tags != null && tags.Length > 0)
             {
                 columns = string.Join(" ,", tags.Select(s => { return $@"""{s}"""; }));
-                columns = @$"""_time"", {columns} ";
+                columns = $@"""_time"", {columns} ";
             }
             else
                 columns = @"""_time""";
-            _Functions = @$"{_Functions} 
+            _Functions = $@"{_Functions} 
 |> pivot(rowKey:[{columns}], columnKey:[""_field""], valueColumn:""_value"") ";
             return this;
         }

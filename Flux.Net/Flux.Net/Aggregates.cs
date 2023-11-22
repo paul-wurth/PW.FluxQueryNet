@@ -11,42 +11,42 @@
         public Aggregates Aggregate(string methodName, string column = "_value")
         {
             _Aggregates = $@"{_Aggregates} 
-|> {methodName}(column: ""{ column }"") ";
+|> {methodName}(column: ""{column}"") ";
             return this;
         }
 
         public Aggregates Mean(string column = "_value")
         {
-            _Aggregates = @$"{_Aggregates} 
-|> mean(column: ""{ column }"") ";
+            _Aggregates = $@"{_Aggregates} 
+|> mean(column: ""{column}"") ";
             return this;
         }
 
         public Aggregates Min(string column = "_value")
         {
-            _Aggregates = @$"{_Aggregates} 
-|> min(column: ""{ column }"") ";
+            _Aggregates = $@"{_Aggregates} 
+|> min(column: ""{column}"") ";
             return this;
         }
 
         public Aggregates Max(string column = "_value")
         {
-            _Aggregates = @$"{_Aggregates} 
-|> max(column: ""{ column }"") ";
+            _Aggregates = $@"{_Aggregates} 
+|> max(column: ""{column}"") ";
             return this;
         }
 
         public Aggregates Sum(string column = "_value")
         {
-            _Aggregates = @$"{_Aggregates} 
-|> sum(column: ""{ column }"") ";
+            _Aggregates = $@"{_Aggregates} 
+|> sum(column: ""{column}"") ";
             return this;
         }
 
         public Aggregates Mode(string column = "_value")
         {
-            _Aggregates = @$"{_Aggregates} 
-|> mode(column: ""{ column }"") ";
+            _Aggregates = $@"{_Aggregates} 
+|> mode(column: ""{column}"") ";
             return this;
         }
         /// <summary>
@@ -56,8 +56,8 @@
         /// <returns></returns>
         public Aggregates Spread(string column = "_value")
         {
-            _Aggregates = @$"{_Aggregates} 
-|> spread(column: ""{ column }"") ";
+            _Aggregates = $@"{_Aggregates} 
+|> spread(column: ""{column}"") ";
             return this;
         }
 
@@ -71,8 +71,8 @@
         /// <returns></returns>
         public Aggregates MovingAverage(int nRecords)
         {
-            _Aggregates = @$"{_Aggregates} 
-|> movingAverage(n: ""{ nRecords }"") ";
+            _Aggregates = $@"{_Aggregates} 
+|> movingAverage(n: ""{nRecords}"") ";
             return this;
         }
 
@@ -85,8 +85,8 @@
         /// <returns></returns>
         public Aggregates TimedMovingAverage(string interval, string duration, string column = "_value")
         {
-            _Aggregates = @$"{_Aggregates} 
-|> timedMovingAverage(every: { interval }, period: { duration }, column: ""{ column }"") ";
+            _Aggregates = $@"{_Aggregates} 
+|> timedMovingAverage(every: {interval}, period: {duration}, column: ""{column}"") ";
             return this;
         }
 
@@ -98,8 +98,8 @@
         /// <returns></returns>
         public Aggregates AggregateWindow(string interval, string aggregateMethod)
         {
-            _Aggregates = @$"{_Aggregates} 
-|> aggregateWindow(every: { interval }, fn: { aggregateMethod }) ";
+            _Aggregates = $@"{_Aggregates} 
+|> aggregateWindow(every: {interval}, fn: {aggregateMethod}) ";
             return this;
         }
     }
