@@ -5,14 +5,14 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<OutputType>Library</OutputType>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  </PropertyGroup>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <PackageId>PW.FluxQueryNet</PackageId>
-    <Description>Flux query builder client library for C#</Description>
-    <Copyright></Copyright>
-    <RepositoryUrl></RepositoryUrl>
-    <PackageTags></PackageTags>
+	<PropertyGroup>
+		<PackageId>PW.FluxQueryNet</PackageId>
+		<Description>Flux query builder client library for C#</Description>
+		<Copyright></Copyright>
+		<RepositoryUrl></RepositoryUrl>
+		<PackageTags></PackageTags>
 		<Authors></Authors>
 		<Company>FluxQuery.Net</Company>
 		<Product>FluxQuery.Net</Product>
@@ -25,7 +25,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="NodaTime" Version="3.1.0" />
+		<PackageReference Include="NodaTime" Version="3.1.8" />
 	</ItemGroup>
 
 </Project>

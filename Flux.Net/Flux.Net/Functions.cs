@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Globalization;
+using System.Linq;
 
 namespace Flux.Net
 {
@@ -33,17 +35,17 @@ namespace Flux.Net
             }
             else
             {
-                val = @$"{value}";
+                val = @$"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
             }
             _Functions = @$"{_Functions} 
-|> fill(column: ""{ column }"", value: {val}) ";
+|> fill(column: ""{column}"", value: {val}) ";
             return this;
         }
 
         public Functions FillPrevious(string column)
         {
             _Functions = @$"{_Functions} 
-|> fill(column: column: ""{ column }"", usePrevious: true) ";
+|> fill(column: column: ""{column}"", usePrevious: true) ";
             return this;
         }
 
@@ -56,7 +58,7 @@ namespace Flux.Net
             }
             else
             {
-                val = @$"{value}";
+                val = @$"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
             }
             _Functions = @$"{_Functions} 
 |> fill(value: {val}) ";
@@ -73,21 +75,21 @@ namespace Flux.Net
         public Functions Unique(string column)
         {
             _Functions = @$"{_Functions} 
-|> unique(column: ""{ column }"") ";
+|> unique(column: ""{column}"") ";
             return this;
         }
 
         public Functions Distinct(string column)
         {
             _Functions = @$"{_Functions} 
-|> distinct(column: ""{ column }"") ";
+|> distinct(column: ""{column}"") ";
             return this;
         }
 
         public Functions Group(params string[] columns)
         {
             _Functions = @$"{_Functions} 
-|> group(columns: [{ string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; })) } ]) ";
+|> group(columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ]) ";
             return this;
         }
 
@@ -99,7 +101,7 @@ namespace Flux.Net
         public Functions KeepColumns(params string[] columns)
         {
             _Functions = @$"{_Functions} 
-|> keep(columns: [{ string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; })) } ]) ";
+|> keep(columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ]) ";
             return this;
         }
 
@@ -111,7 +113,7 @@ namespace Flux.Net
         public Functions DropColumns(params string[] columns)
         {
             _Functions = @$"{_Functions} 
-|> drop(columns: [{ string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; })) } ]) ";
+|> drop(columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ]) ";
             return this;
         }
 
@@ -126,7 +128,7 @@ namespace Flux.Net
             if (columns != null && columns.Length > 0)
             {
                 _Functions = @$"{_Functions} 
-|> top(n:{n}, columns: [{ string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; })) } ]) ";
+|> top(n:{n}, columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ]) ";
             }
             else
             {
@@ -147,7 +149,7 @@ namespace Flux.Net
             if (columns != null && columns.Length > 0)
             {
                 _Functions = @$"{_Functions} 
-|> bottom(n:{n}, columns: [{ string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; })) } ]) ";
+|> bottom(n:{n}, columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ]) ";
             }
             else
             {
@@ -172,7 +174,7 @@ namespace Flux.Net
             }
             else
             {
-                val = @$"{value}";
+                val = @$"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
             }
             _Functions = @$"{_Functions} 
 |> stateDuration(fn: (r) => r.{column} == {val}, column: ""{column}"") ";
@@ -194,7 +196,7 @@ namespace Flux.Net
             }
             else
             {
-                val = @$"{value}";
+                val = @$"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
             }
             _Functions = @$"{_Functions} 
 |> stateCount(fn: (r) => r.{column} == {val}, column: ""{column}"") ";
