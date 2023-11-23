@@ -40,86 +40,29 @@ namespace Flux.Net
 
         #region time range
         public FluxQuery RelativeTimeRange(KeyValuePair<TimeUnit, double> start, KeyValuePair<TimeUnit, double>? end = null)
-        {
-            var startUnit = GetTimeUnit(start.Key);
-            if (end == null)
-            {
-                queryString.Append("\n");
-                queryString.Append($@"|> range(start: {Convert.ToString(start.Value, CultureInfo.InvariantCulture)}{startUnit})");
-            }
-            else
-            {
-                var endUnit = GetTimeUnit(start.Key);
-                queryString.Append("\n");
-                queryString.Append($@"|> range(start: {Convert.ToString(start.Value, CultureInfo.InvariantCulture)}{startUnit}, stop: {Convert.ToString(end.Value, CultureInfo.InvariantCulture)}{endUnit}) ");
-            }
-            return this;
-        }
+            => Range(start.ToFlux(), end?.ToFlux());
 
         public FluxQuery AbsoluteTimeRange(Instant start, Instant? end = null)
-        {
-            string endDateTime = DateTime.UtcNow.ToInfluxDateTime();
-            if (end.HasValue)
-            {
-                endDateTime = end.Value.ToInfluxDateTime();
-                AbsoluteTimeRange(start.ToInfluxDateTime(), endDateTime);
-            }
-            else
-                AbsoluteTimeRange(start.ToInfluxDateTime());
-            return this;
-        }
+            => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
 
         public FluxQuery AbsoluteTimeRange(OffsetDateTime start, OffsetDateTime? end = null)
-        {
-            string endDateTime = DateTime.UtcNow.ToInfluxDateTime();
-            if (end.HasValue)
-            {
-                endDateTime = end.Value.ToInfluxDateTime();
-                AbsoluteTimeRange(start.ToInfluxDateTime(), endDateTime);
-            }
-            else
-                AbsoluteTimeRange(start.ToInfluxDateTime());
-            return this;
-        }
+            => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
 
         public FluxQuery AbsoluteTimeRange(ZonedDateTime start, ZonedDateTime? end = null)
-        {
-            string endDateTime = DateTime.UtcNow.ToInfluxDateTime();
-            if (end.HasValue)
-            {
-                endDateTime = end.Value.ToInfluxDateTime();
-                AbsoluteTimeRange(start.ToInfluxDateTime(), endDateTime);
-            }
-            else
-                AbsoluteTimeRange(start.ToInfluxDateTime());
-
-            return this;
-        }
+            => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
 
         public FluxQuery AbsoluteTimeRange(DateTime start, DateTime? end = null)
-        {
-            string endDateTime = DateTime.UtcNow.ToInfluxDateTime();
-            if (end.HasValue)
-            {
-                endDateTime = end.Value.ToInfluxDateTime();
-                AbsoluteTimeRange(start.ToInfluxDateTime(), endDateTime);
-            }
-            else
-                AbsoluteTimeRange(start.ToInfluxDateTime());
-            return this;
-        }
+            => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
 
-        private FluxQuery AbsoluteTimeRange(string start, string end)
+        private FluxQuery Range(string start, string end)
         {
-            queryString.Append("\n");
-            queryString.Append($@"|> range(start: {start}, stop: {end}) ");
-            return this;
-        }
+            queryString.AppendLine();
+            queryString.Append("|> range(start: ").Append(start);
 
-        private FluxQuery AbsoluteTimeRange(string start)
-        {
-            queryString.Append("\n");
-            queryString.Append($@"|> range(start: {start}) ");
+            if (!string.IsNullOrEmpty(end))
+                queryString.Append(", stop: ").Append(end);
+
+            queryString.Append(")");
             return this;
         }
         #endregion
@@ -266,37 +209,6 @@ namespace Flux.Net
             }
 
             return queryString.ToString();
-        }
-
-
-        private string GetTimeUnit(TimeUnit unit)
-        {
-            string un = string.Empty;
-            switch (unit)
-            {
-                case TimeUnit.Seconds:
-                    un = "s";
-                    break;
-                case TimeUnit.Minutes:
-                    un = "m";
-                    break;
-                case TimeUnit.Hours:
-                    un = "h";
-                    break;
-                case TimeUnit.Days:
-                    un = "d";
-                    break;
-                case TimeUnit.Months:
-                    un = "mo";
-                    break;
-                case TimeUnit.Years:
-                    un = "y";
-                    break;
-                default:
-                    un = "d";
-                    break;
-            }
-            return un;
         }
     }
 }
