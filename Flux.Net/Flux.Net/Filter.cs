@@ -1,84 +1,112 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Flux.Net
 {
     public class FluxFilter
     {
-        internal string FilterQuery = string.Empty;
-        internal string SelectQuery = string.Empty;
-        internal string MeasurementName = string.Empty;
-        internal string Aggregates = string.Empty;
-        internal string Functions = string.Empty;
-        public FluxFilter()
-        {
-        }
-
-        public FluxFilter(string select, string filter)
-        {
-            SelectQuery = select;
-            SelectQuery = filter;
-        }
+        private readonly List<string> _filters = new();
+        private readonly List<FluxSelect> _selections = new();
 
         public FluxFilter Where(string filters)
         {
-            FilterQuery = $"and {filters}";
+            _filters.Add(filters);
             return this;
         }
 
         public FluxFilter Where(IDictionary<string, string> tagFilters)
         {
-            if (tagFilters == null || tagFilters.Count() == 0)
+            if (tagFilters == null || tagFilters.Count == 0)
                 return this;
 
-            var conditions = tagFilters
-                .Select(kvp => $"r.{kvp.Key} == \"{kvp.Value}\"");
+            var conditions = tagFilters.Select(kvp => $"r[\"{kvp.Key}\"] == \"{kvp.Value}\"");
+            _filters.AddRange(conditions);
 
-            return Where(string.Join(" and ", conditions));
+            return this;
         }
 
         public FluxFilter Measurement(string measurement)
         {
-            MeasurementName = measurement;
+            _filters.Add($"r._measurement == \"{measurement}\"");
             return this;
         }
 
         public FluxFilter Select(Action<FluxSelect> filter)
         {
-            var selectFilter = new FluxSelect();
-            filter.Invoke(selectFilter);
-            SelectQuery = $" and ({selectFilter.Select})";
+            var select = new FluxSelect();
+            filter.Invoke(select);
+            _selections.Add(select);
+
             return this;
+        }
+
+        internal void Build(StringBuilder stringBuilder)
+        {
+            if (_filters.Count == 0 && _selections.Count == 0)
+                return;
+
+            stringBuilder.Append("|> filter(fn: (r) => ");
+
+            for (int i = 0; i < _filters.Count; i++)
+            {
+                if (i > 0)
+                    stringBuilder.Append(" and ");
+
+                stringBuilder.Append(_filters[i]);
+            }
+
+            for (int i = 0; i < _selections.Count; i++)
+            {
+                if (i > 0 || _filters.Count > 0)
+                    stringBuilder.Append(" and ");
+
+                stringBuilder.Append("(");
+                _selections[i].Build(stringBuilder);
+                stringBuilder.Append(")");
+            }
+
+            stringBuilder.Append(")");
         }
     }
 
     public class FluxSelect
     {
-        internal string Select = string.Empty;
-        public FluxSelect()
-        {
-            Select = string.Empty;
-        }
+        private readonly List<string> _selections = new();
 
         public FluxSelect Fields(params string[] fields)
         {
-            var sp = "r._field == " + string.Join(@" or r._field == ", fields.Select(s => { return $@"""{s}"""; }));
-            if (string.IsNullOrEmpty(Select))
-                Select = sp;
-            else
-                Select = $"{Select} and {sp} ";
+            if (fields == null || fields.Length == 0)
+                return this;
+
+            var selections = string.Join(" or ", fields.Select(field => $"r._field == \"{field}\""));
+            _selections.Add(selections);
+
             return this;
         }
 
-        public FluxSelect Tags(params string[] fields)
+        [Obsolete("InfluxDB tags cannot be selected this way because \"r.tag\" doesn't exist by default. Please use Where() instead.")]
+        public FluxSelect Tags(params string[] tags)
         {
-            var sp = "r.tag == " + string.Join(@" or r.tag == ", fields.Select(s => { return $@"""{s}"""; }));
-            if (string.IsNullOrEmpty(Select))
-                Select = sp;
-            else
-                Select = $"{Select} and {sp} ";
+            if (tags == null || tags.Length == 0)
+                return this;
+
+            var selections = string.Join(" or ", tags.Select(tag => $"r.tag == \"{tag}\""));
+            _selections.Add(selections);
+
             return this;
+        }
+
+        internal void Build(StringBuilder stringBuilder)
+        {
+            for (int i = 0; i < _selections.Count; i++)
+            {
+                if (i > 0)
+                    stringBuilder.Append(" and ");
+
+                stringBuilder.Append(_selections[i]);
+            }
         }
     }
 }

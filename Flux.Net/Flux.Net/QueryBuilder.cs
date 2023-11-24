@@ -21,10 +21,11 @@ namespace Flux.Net
         private string sortRecords = string.Empty;
         private string window = string.Empty;
         private string group = string.Empty;
-        private FluxFilter filter = new FluxFilter();
-        private Aggregates Aggregate = new Aggregates();
-        private Functions Function = new Functions();
-        StringBuilder queryString = new StringBuilder();
+
+        private List<FluxFilter> _filters = new();
+        private Aggregates Aggregate = new();
+        private Functions Function = new();
+        private StringBuilder queryString = new();
 
         public FluxQuery(string dataSource, string retentionPolicy = "autogen")
         {
@@ -72,8 +73,9 @@ namespace Flux.Net
 
         public FluxQuery Filter(Action<FluxFilter> filterAction)
         {
-            filter = new FluxFilter();
+            var filter = new FluxFilter();
             filterAction.Invoke(filter);
+            _filters.Add(filter);
 
             return this;
         }
@@ -134,31 +136,13 @@ namespace Flux.Net
 
         public string ToQuery()
         {
-            var select = filter?.SelectQuery;
-            var filt = filter?.FilterQuery;
-            var m = filter?.MeasurementName;
             var aggr = Aggregate?._Aggregates;
             var fun = Function?._Functions;
-            string filterQuery = string.Empty;
 
-            if (!string.IsNullOrEmpty(m))
+            for (int i = 0; i < _filters.Count; i++)
             {
-                filterQuery = $@"{filterQuery} r._measurement == ""{m}"" ";
-            }
-
-            if (!string.IsNullOrEmpty(select))
-            {
-                filterQuery = $@"{filterQuery} {select}";
-            }
-
-            if (!string.IsNullOrEmpty(filt))
-            {
-                filterQuery = $@"{filterQuery} {filt}";
-            }
-            if (!string.IsNullOrEmpty(filterQuery))
-            {
-                queryString.Append("\n");
-                queryString.Append($@"|> filter(fn: (r) => {filterQuery})");
+                queryString.AppendLine();
+                _filters[i].Build(queryString);
             }
 
             if (!string.IsNullOrEmpty(group))
