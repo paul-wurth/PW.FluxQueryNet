@@ -22,24 +22,24 @@ namespace Flux.Net
         private string window = string.Empty;
         private string group = string.Empty;
 
-        private List<FluxFilter> _filters = new();
         private Aggregates Aggregate = new();
         private Functions Function = new();
-        private StringBuilder queryString = new();
+        private readonly StringBuilder _stringBuilder = new();
 
         public FluxQuery(string dataSource, string retentionPolicy = "autogen")
         {
             if (string.IsNullOrEmpty(retentionPolicy))
             {
-                queryString.Append($@"from(bucket:""{dataSource}"") ");
+                _stringBuilder.Append($@"from(bucket:""{dataSource}"") ");
             }
             else
             {
-                queryString.Append($@"from(bucket:""{dataSource}/{retentionPolicy}"") ");
+                _stringBuilder.Append($@"from(bucket:""{dataSource}/{retentionPolicy}"") ");
             }
         }
 
-        #region time range
+        #region Time range
+
         public FluxQuery RelativeTimeRange(KeyValuePair<TimeUnit, double> start, KeyValuePair<TimeUnit, double>? end = null)
             => Range(start.ToFlux(), end?.ToFlux());
 
@@ -55,28 +55,31 @@ namespace Flux.Net
         public FluxQuery AbsoluteTimeRange(DateTime start, DateTime? end = null)
             => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
 
-        private FluxQuery Range(string start, string end)
+        private FluxQuery Range(string start, string? end)
         {
-            queryString.AppendLine();
-            queryString.Append("|> range(start: ").Append(start);
+            _stringBuilder.AppendLine();
+            _stringBuilder.Append("|> range(start: ").Append(start);
 
             if (!string.IsNullOrEmpty(end))
-                queryString.Append(", stop: ").Append(end);
+                _stringBuilder.Append(", stop: ").Append(end);
 
-            queryString.Append(")");
+            _stringBuilder.Append(")");
             return this;
         }
+
         #endregion
 
-
-        #region filter
+        #region Filter
 
         public FluxQuery Filter(Action<FluxFilter> filterAction)
         {
-            var filter = new FluxFilter();
-            filterAction.Invoke(filter);
-            _filters.Add(filter);
+            _stringBuilder.AppendLine();
+            _stringBuilder.Append("|> filter(fn: (r) => ");
 
+            var filter = new FluxFilter(_stringBuilder);
+            filterAction.Invoke(filter);
+
+            _stringBuilder.Append(")");
             return this;
         }
 
@@ -89,7 +92,7 @@ namespace Flux.Net
             return this;
         }
 
-        public FluxQuery Window(string interval, Action<Aggregates> filterAction = null)
+        public FluxQuery Window(string interval, Action<Aggregates>? filterAction = null)
         {
             window = $@"window(every: {interval})";
             if (filterAction != null)
@@ -139,60 +142,54 @@ namespace Flux.Net
             var aggr = Aggregate?._Aggregates;
             var fun = Function?._Functions;
 
-            for (int i = 0; i < _filters.Count; i++)
-            {
-                queryString.AppendLine();
-                _filters[i].Build(queryString);
-            }
-
             if (!string.IsNullOrEmpty(group))
             {
                 // Insert group to merge all tables
-                queryString.Append(group);
-                queryString.Append("\n");
+                _stringBuilder.Append(group);
+                _stringBuilder.Append("\n");
             }
 
             if (!string.IsNullOrEmpty(fun))
             {
-                queryString.Append(fun);
-                queryString.Append("\n");
+                _stringBuilder.Append(fun);
+                _stringBuilder.Append("\n");
                 //queryString = $@"{queryString} 
                 //                 {fun} ";
             }
 
             if (!string.IsNullOrEmpty(window))
             {
-                queryString.Append(window);
-                queryString.Append("\n");
+                _stringBuilder.Append(window);
+                _stringBuilder.Append("\n");
                 //queryString = $@"{queryString} 
                 //                 {window} ";
             }
 
             if (!string.IsNullOrEmpty(aggr))
             {
-                queryString.Append(aggr);
-                queryString.Append("\n");
+                _stringBuilder.Append(aggr);
+                _stringBuilder.Append("\n");
                 //queryString = $@"{queryString} 
                 //                 {aggr} ";
             }
 
             if (!string.IsNullOrEmpty(sortRecords))
             {
-                queryString.Append(sortRecords);
-                queryString.Append("\n");
+                _stringBuilder.Append(sortRecords);
+                _stringBuilder.Append("\n");
                 //queryString = $@"{queryString} 
                 //                 {sortRecords} ";
             }
 
             if (!string.IsNullOrEmpty(limitRecords))
             {
-                queryString.Append(limitRecords);
-                queryString.Append("\n");
+                _stringBuilder.Append(limitRecords);
+                _stringBuilder.Append("\n");
                 //queryString = $@"{queryString} 
                 //                 {limitRecords} ";
             }
 
-            return queryString.ToString();
+            return _stringBuilder.ToString();
         }
     }
 }

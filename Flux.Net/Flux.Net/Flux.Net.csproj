@@ -4,7 +4,7 @@
 		<OutputType>Library</OutputType>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<LangVersion>12.0</LangVersion>
-		<Nullable>disable</Nullable>
+		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<DebugType Condition="'$(Configuration)' == 'Release'">none</DebugType>
 	</PropertyGroup>
