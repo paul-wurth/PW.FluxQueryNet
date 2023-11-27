@@ -7,15 +7,7 @@ using System.Text;
 
 namespace Flux.Net
 {
-    public class QueryBuilder
-    {
-        public static FluxQuery From(string dataSource, string retentionPolicy = "autogen")
-        {
-            return new FluxQuery(dataSource, retentionPolicy);
-        }
-    }
-
-    public class FluxQuery
+    public class FluxQueryBuilder
     {
         private string limitRecords = string.Empty;
         private string sortRecords = string.Empty;
@@ -24,38 +16,42 @@ namespace Flux.Net
 
         private Aggregates Aggregate = new();
         private Functions Function = new();
-        private readonly StringBuilder _stringBuilder = new();
+        private readonly StringBuilder _stringBuilder;
 
-        public FluxQuery(string dataSource, string retentionPolicy = "autogen")
+        #region From
+
+        public static FluxQueryBuilder From(string bucket, string? retentionPolicy = null) => new(bucket, retentionPolicy);
+
+        private FluxQueryBuilder(string bucket, string? retentionPolicy)
         {
-            if (string.IsNullOrEmpty(retentionPolicy))
-            {
-                _stringBuilder.Append($@"from(bucket:""{dataSource}"") ");
-            }
-            else
-            {
-                _stringBuilder.Append($@"from(bucket:""{dataSource}/{retentionPolicy}"") ");
-            }
+            _stringBuilder = new StringBuilder("from(bucket: \"").Append(bucket);
+
+            if (!string.IsNullOrWhiteSpace(retentionPolicy))
+                _stringBuilder.Append("/").Append(retentionPolicy);
+
+            _stringBuilder.Append("\")");
         }
+
+        #endregion
 
         #region Time range
 
-        public FluxQuery RelativeTimeRange(KeyValuePair<TimeUnit, double> start, KeyValuePair<TimeUnit, double>? end = null)
+        public FluxQueryBuilder RelativeTimeRange(KeyValuePair<TimeUnit, double> start, KeyValuePair<TimeUnit, double>? end = null)
             => Range(start.ToFlux(), end?.ToFlux());
 
-        public FluxQuery AbsoluteTimeRange(Instant start, Instant? end = null)
+        public FluxQueryBuilder AbsoluteTimeRange(Instant start, Instant? end = null)
             => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
 
-        public FluxQuery AbsoluteTimeRange(OffsetDateTime start, OffsetDateTime? end = null)
+        public FluxQueryBuilder AbsoluteTimeRange(OffsetDateTime start, OffsetDateTime? end = null)
             => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
 
-        public FluxQuery AbsoluteTimeRange(ZonedDateTime start, ZonedDateTime? end = null)
+        public FluxQueryBuilder AbsoluteTimeRange(ZonedDateTime start, ZonedDateTime? end = null)
             => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
 
-        public FluxQuery AbsoluteTimeRange(DateTime start, DateTime? end = null)
+        public FluxQueryBuilder AbsoluteTimeRange(DateTime start, DateTime? end = null)
             => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
 
-        private FluxQuery Range(string start, string? end)
+        private FluxQueryBuilder Range(string start, string? end)
         {
             _stringBuilder.AppendLine();
             _stringBuilder.Append("|> range(start: ").Append(start);
@@ -71,7 +67,7 @@ namespace Flux.Net
 
         #region Filter
 
-        public FluxQuery Filter(Action<FluxFilter> filterAction)
+        public FluxQueryBuilder Filter(Action<FluxFilter> filterAction)
         {
             _stringBuilder.AppendLine();
             _stringBuilder.Append("|> filter(fn: (r) => ");
@@ -85,14 +81,14 @@ namespace Flux.Net
 
         #endregion
 
-        public FluxQuery Aggregates(Action<Aggregates> filterAction)
+        public FluxQueryBuilder Aggregates(Action<Aggregates> filterAction)
         {
             Aggregate = new Aggregates();
             filterAction.Invoke(Aggregate);
             return this;
         }
 
-        public FluxQuery Window(string interval, Action<Aggregates>? filterAction = null)
+        public FluxQueryBuilder Window(string interval, Action<Aggregates>? filterAction = null)
         {
             window = $@"window(every: {interval})";
             if (filterAction != null)
@@ -103,20 +99,20 @@ namespace Flux.Net
             return this;
         }
 
-        public FluxQuery Functions(Action<Functions> filterAction)
+        public FluxQueryBuilder Functions(Action<Functions> filterAction)
         {
             Function = new Functions();
             filterAction.Invoke(Function);
             return this;
         }
 
-        public FluxQuery Count()
+        public FluxQueryBuilder Count()
         {
             limitRecords = "\n|> count() ";
             return this;
         }
 
-        public FluxQuery Sort(bool desc, params string[] columns)
+        public FluxQueryBuilder Sort(bool desc, params string[] columns)
         {
             var orderString = Convert.ToString(desc, CultureInfo.InvariantCulture).ToLowerInvariant();
             sortRecords = $@"
@@ -124,14 +120,14 @@ namespace Flux.Net
             return this;
         }
 
-        public FluxQuery Limit(int limit, int offset = 0)
+        public FluxQueryBuilder Limit(int limit, int offset = 0)
         {
             limitRecords = $@"
 |> limit(n: {limit}, offset: {offset}) ";
             return this;
         }
 
-        public FluxQuery Group()
+        public FluxQueryBuilder Group()
         {
             group = "\n|> group() ";
             return this;
