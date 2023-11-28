@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 
 namespace Flux.Net
 {
@@ -32,7 +30,7 @@ namespace Flux.Net
 
         public static string ToFlux(this KeyValuePair<TimeUnit, double> duration)
         {
-            return Convert.ToString(duration.Value, CultureInfo.InvariantCulture) + duration.Key.ToFlux();
+            return duration.Value.ToFlux() + duration.Key.ToFlux();
         }
     }
 }

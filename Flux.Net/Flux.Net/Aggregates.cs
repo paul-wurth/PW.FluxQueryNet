@@ -1,105 +1,196 @@
 ﻿namespace Flux.Net
 {
-    public class Aggregates
+    public partial class FluxQueryBuilder
     {
-        internal string _Aggregates = string.Empty;
-        public Aggregates()
-        {
-            _Aggregates = string.Empty;
-        }
-
-        public Aggregates Aggregate(string methodName, string column = "_value")
-        {
-            _Aggregates = $@"{_Aggregates} 
-|> {methodName}(column: ""{column}"") ";
-            return this;
-        }
-
-        public Aggregates Mean(string column = "_value")
-        {
-            _Aggregates = $@"{_Aggregates} 
-|> mean(column: ""{column}"") ";
-            return this;
-        }
-
-        public Aggregates Min(string column = "_value")
-        {
-            _Aggregates = $@"{_Aggregates} 
-|> min(column: ""{column}"") ";
-            return this;
-        }
-
-        public Aggregates Max(string column = "_value")
-        {
-            _Aggregates = $@"{_Aggregates} 
-|> max(column: ""{column}"") ";
-            return this;
-        }
-
-        public Aggregates Sum(string column = "_value")
-        {
-            _Aggregates = $@"{_Aggregates} 
-|> sum(column: ""{column}"") ";
-            return this;
-        }
-
-        public Aggregates Mode(string column = "_value")
-        {
-            _Aggregates = $@"{_Aggregates} 
-|> mode(column: ""{column}"") ";
-            return this;
-        }
         /// <summary>
-        /// Max-Min
+        /// Returns the result of the Flux function specified by <paramref name="methodName"/>.
         /// </summary>
-        /// <param name="column"></param>
-        /// <returns></returns>
-        public Aggregates Spread(string column = "_value")
+        /// <param name="methodName">Name of the Flux function.</param>
+        /// <param name="column">Column to operate on.</param>
+        public FluxQueryBuilder Aggregate(string methodName, string? column = null)
         {
-            _Aggregates = $@"{_Aggregates} 
-|> spread(column: ""{column}"") ";
+            _stringBuilder.AppendLine();
+            _stringBuilder.Append("|> ").Append(methodName).Append("(");
+
+            if (!string.IsNullOrWhiteSpace(column))
+                _stringBuilder.Append("column: \"").Append(column).Append("\"");
+
+            _stringBuilder.Append(")");
             return this;
         }
 
         /// <summary>
-        /// The average over a period populated by n values is equal to their algebraic mean.
-        /// The average over a period populated by only null values is null.
-        /// Moving averages skip null values.
-        /// If n is less than the number of records in a table, movingAverage returns the average of the available values.
+        /// Returns the average of non-<see langword="null"/> values in a specified <paramref name="column"/> from each input table.
         /// </summary>
-        /// <param name="nRecords"></param>
-        /// <returns></returns>
-        public Aggregates MovingAverage(int nRecords)
+        /// <param name="column">Column to use to compute means. Default is <c>_value</c>.</param>
+        public FluxQueryBuilder Mean(string? column = null) => Aggregate("mean", column);
+
+        /// <summary>
+        /// Returns the row with the minimum value in a specified <paramref name="column"/> from each input table.
+        /// </summary>
+        /// <param name="column">Column to return minimum values from. Default is <c>_value</c>.</param>
+        /// <remarks>This drops empty tables.</remarks>
+        public FluxQueryBuilder Min(string? column = null) => Aggregate("min", column);
+
+        /// <summary>
+        /// Returns the row with the maximum value in a specified <paramref name="column"/> from each input table.
+        /// </summary>
+        /// <param name="column">Column to return maximum values from. Default is <c>_value</c>.</param>
+        /// <remarks>This drops empty tables.</remarks>
+        public FluxQueryBuilder Max(string? column = null) => Aggregate("max", column);
+
+        /// <summary>
+        /// Returns the sum of non-<see langword="null"/> values in a specified <paramref name="column"/>.
+        /// </summary>
+        /// <param name="column">Column to operate on. Default is <c>_value</c>.</param>
+        public FluxQueryBuilder Sum(string? column = null) => Aggregate("sum", column);
+
+        /// <summary>
+        /// <para>Returns the number of records in each input table.</para>
+        /// <para>The function counts both <see langword="null"/> and non-<see langword="null"/> records.</para>
+        /// </summary>
+        /// <param name="column">Column to count values in and store the total count.</param>
+        /// <remarks>This returns <c>0</c> for empty tables.</remarks>
+        public FluxQueryBuilder Count(string? column = null) => Aggregate("count", column);
+
+        /// <summary>
+        /// <para>Returns the non-<see langword="null"/> value or values that occur most often in a specified <paramref name="column"/> in each input table.</para>
+        /// <para>If there are multiple modes, it returns all mode values in a sorted table. If there is no mode, it returns <see langword="null"/>.</para>
+        /// </summary>
+        /// <param name="column">Column to return the mode from. Default is <c>_value</c>.</param>
+        /// <remarks>This drops empty tables.</remarks>
+        public FluxQueryBuilder Mode(string? column = null) => Aggregate("mode", column);
+
+        /// <summary>
+        /// Returns the difference between the minimum and maximum values in a specified <paramref name="column"/>.
+        /// </summary>
+        /// <param name="column">Column to operate on. Default is <c>_value</c>.</param>
+        public FluxQueryBuilder Spread(string? column = null) => Aggregate("spread", column);
+
+
+        /// <summary>
+        /// Calculates the mean of non-<see langword="null"/> values using the current value and <c>n - 1</c> previous values in the <c>_value</c> column.
+        /// </summary>
+        /// <param name="n">Number of values to average.</param>
+        /// <remarks>
+        /// Moving average rules:
+        /// <list type="bullet">
+        ///     <item>The average over a period populated by <paramref name="n"/> values is equal to their algebraic mean.</item>
+        ///     <item>The average over a period populated by only <see langword="null"/> values is <see langword="null"/>.</item>
+        ///     <item>Moving averages skip <see langword="null"/> values.</item>
+        ///     <item>If <paramref name="n"/> is less than the number of records in a table, it returns the average of the available values.</item>
+        /// </list>
+        /// </remarks>
+        public FluxQueryBuilder MovingAverage(int n)
         {
-            _Aggregates = $@"{_Aggregates} 
-|> movingAverage(n: ""{nRecords}"") ";
+            _stringBuilder.AppendLine();
+            _stringBuilder.Append("|> movingAverage(n: ").Append(n.ToFlux()).Append(")");
+
             return this;
         }
 
         /// <summary>
-        /// calculates the mean of values in a defined time range at a specified frequency
+        /// Calculates the mean of values in a defined time range at a specified frequency.
         /// </summary>
-        /// <param name="interval">The frequency of time windows. example 1m, 1h, 1d, mo, 1y</param>
-        /// <param name="duration">The length of averaged time window</param>
-        /// <param name="column"></param>
-        /// <returns></returns>
-        public Aggregates TimedMovingAverage(string interval, string duration, string column = "_value")
+        /// <param name="every">Frequency of time window.</param>
+        /// <param name="period">Length of each averaged time window. A negative duration indicates start and stop boundaries are reversed.</param>
+        /// <param name="column">Column to operate on. Default is <c>_value</c>.</param>
+        /// <remarks>
+        /// <paramref name="every"/> and <paramref name="period"/> parameters support all valid duration units (eg. <c>1s</c>, <c>1m</c>, <c>1h</c>, <c>1d</c>),
+        /// including calendar months (<c>1mo</c>) and years (<c>1y</c>).<br/> When aggregating by week (<c>1w</c>), all calculated weeks begin on Thursday
+        /// since weeks are determined using the Unix epoch (1970-01-01 00:00:00 UTC) which was a Thursday.
+        /// </remarks>
+        public FluxQueryBuilder TimedMovingAverage(string every, string period, string? column = null)
         {
-            _Aggregates = $@"{_Aggregates} 
-|> timedMovingAverage(every: {interval}, period: {duration}, column: ""{column}"") ";
+            _stringBuilder.AppendLine();
+            _stringBuilder.Append("|> timedMovingAverage(every: ").Append(every).Append(", period: ").Append(period);
+
+            if (!string.IsNullOrWhiteSpace(column))
+                _stringBuilder.Append(", column: \"").Append(column).Append("\"");
+
+            _stringBuilder.Append(")");
             return this;
         }
 
         /// <summary>
-        /// calculates the mean of values in a defined time range at a specified frequency
+        /// Groups records using regular time intervals.
         /// </summary>
-        /// <param name="interval">The frequency of time windows. example 1m, 1h, 1d, mo, 1y</param>
-        /// <param name="aggregateMethod">example count, sum, mean</param>
-        /// <returns></returns>
-        public Aggregates AggregateWindow(string interval, string aggregateMethod)
+        /// <param name="every">Duration of time between windows.</param>
+        /// <param name="period">Duration of windows. A negative duration indicates start and stop boundaries are reversed. Default is the <paramref name="every"/> value.</param>
+        /// <param name="offset">Duration to shift the window boundaries by. A negative duration indicates the offset goes backwards in time. Default is <c>0s</c>.</param>
+        /// <param name="location">Location used to determine timezone.</param>
+        /// <param name="timeColumn">Column that contains time values. Default is <c>_time</c>.</param>
+        /// <param name="startColumn">Column to store the window start time in. Default is <c>_start</c>.</param>
+        /// <param name="stopColumn">Column to store the window stop time in. Default is <c>_stop</c>.</param>
+        /// <param name="createEmpty">Create empty tables for empty window. Default is <see langword="false"/>.</param>
+        public FluxQueryBuilder Window(string every, string? period = null, string? offset = null,
+            string? location = null, string? timeColumn = null, string? startColumn = null, string? stopColumn = null, bool createEmpty = false)
         {
-            _Aggregates = $@"{_Aggregates} 
-|> aggregateWindow(every: {interval}, fn: {aggregateMethod}) ";
+            _stringBuilder.AppendLine();
+            _stringBuilder.Append("|> window(every: ").Append(every);
+
+            if (!string.IsNullOrWhiteSpace(period))
+                _stringBuilder.Append(", period: ").Append(period);
+
+            if (!string.IsNullOrWhiteSpace(offset))
+                _stringBuilder.Append(", offset: ").Append(offset);
+
+            if (!string.IsNullOrWhiteSpace(location))
+                _stringBuilder.Append(", location: ").Append(location);
+
+            if (!string.IsNullOrWhiteSpace(timeColumn))
+                _stringBuilder.Append(", timeColumn: \"").Append(timeColumn).Append("\"");
+
+            if (!string.IsNullOrWhiteSpace(startColumn))
+                _stringBuilder.Append(", startColumn: \"").Append(startColumn).Append("\"");
+
+            if (!string.IsNullOrWhiteSpace(stopColumn))
+                _stringBuilder.Append(", stopColumn: \"").Append(stopColumn).Append("\"");
+
+            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFlux()).Append(")");
+            return this;
+        }
+
+        /// <summary>
+        /// Downsamples data by grouping data into fixed windows of time and applying an aggregate or selector function to each window.
+        /// </summary>
+        /// <param name="aggregateFunction">Aggregate or selector function to apply to each time window.</param>
+        /// <param name="every">Duration of time between windows.</param>
+        /// <param name="period">Duration of windows. A negative duration indicates start and stop boundaries are reversed. Default is the <paramref name="every"/> value.</param>
+        /// <param name="offset">Duration to shift the window boundaries by. A negative duration indicates the offset goes backwards in time. Default is <c>0s</c>.</param>
+        /// <param name="location">Location used to determine timezone.</param>
+        /// <param name="column">Column to operate on.</param>
+        /// <param name="timeSrcColumn">Column to use as the source of the new time value for aggregate values. Default is <c>_stop</c>.</param>
+        /// <param name="timeDstColumn">Column to store time values for aggregate values in. Default is <c>_time</c>.</param>
+        /// <param name="createEmpty">
+        /// Create empty tables for empty window. Default is <see langword="true"/>.<br/>
+        /// When <see langword="true"/>, aggregate functions return empty tables, but selector functions do not. By design, selectors drop empty tables.
+        /// </param>
+        public FluxQueryBuilder AggregateWindow(string aggregateFunction, string every, string? period = null, string? offset = null,
+            string? location = null, string? column = null, string? timeSrcColumn = null, string? timeDstColumn = null, bool createEmpty = true)
+        {
+            _stringBuilder.AppendLine();
+            _stringBuilder.Append("|> aggregateWindow(fn: ").Append(aggregateFunction).Append(", every: ").Append(every);
+
+            if (!string.IsNullOrWhiteSpace(period))
+                _stringBuilder.Append(", period: ").Append(period);
+
+            if (!string.IsNullOrWhiteSpace(offset))
+                _stringBuilder.Append(", offset: ").Append(offset);
+
+            if (!string.IsNullOrWhiteSpace(location))
+                _stringBuilder.Append(", location: ").Append(location);
+
+            if (!string.IsNullOrWhiteSpace(column))
+                _stringBuilder.Append(", column: \"").Append(column).Append("\"");
+
+            if (!string.IsNullOrWhiteSpace(timeSrcColumn))
+                _stringBuilder.Append(", timeSrc: \"").Append(timeSrcColumn).Append("\"");
+
+            if (!string.IsNullOrWhiteSpace(timeDstColumn))
+                _stringBuilder.Append(", timeDst: \"").Append(timeDstColumn).Append("\"");
+
+            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFlux()).Append(")");
             return this;
         }
     }

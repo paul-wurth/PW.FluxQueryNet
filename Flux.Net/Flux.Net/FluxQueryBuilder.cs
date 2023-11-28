@@ -1,20 +1,17 @@
 ﻿using NodaTime;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 
 namespace Flux.Net
 {
-    public class FluxQueryBuilder
+    public partial class FluxQueryBuilder
     {
         private string limitRecords = string.Empty;
         private string sortRecords = string.Empty;
-        private string window = string.Empty;
         private string group = string.Empty;
 
-        private Aggregates Aggregate = new();
         private Functions Function = new();
         private readonly StringBuilder _stringBuilder;
 
@@ -40,16 +37,16 @@ namespace Flux.Net
             => Range(start.ToFlux(), end?.ToFlux());
 
         public FluxQueryBuilder AbsoluteTimeRange(Instant start, Instant? end = null)
-            => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
+            => Range(start.ToFlux(), end?.ToFlux());
 
         public FluxQueryBuilder AbsoluteTimeRange(OffsetDateTime start, OffsetDateTime? end = null)
-            => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
+            => Range(start.ToFlux(), end?.ToFlux());
 
         public FluxQueryBuilder AbsoluteTimeRange(ZonedDateTime start, ZonedDateTime? end = null)
-            => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
+            => Range(start.ToFlux(), end?.ToFlux());
 
         public FluxQueryBuilder AbsoluteTimeRange(DateTime start, DateTime? end = null)
-            => Range(start.ToInfluxDateTime(), end?.ToInfluxDateTime());
+            => Range(start.ToFlux(), end?.ToFlux());
 
         private FluxQueryBuilder Range(string start, string? end)
         {
@@ -81,24 +78,6 @@ namespace Flux.Net
 
         #endregion
 
-        public FluxQueryBuilder Aggregates(Action<Aggregates> filterAction)
-        {
-            Aggregate = new Aggregates();
-            filterAction.Invoke(Aggregate);
-            return this;
-        }
-
-        public FluxQueryBuilder Window(string interval, Action<Aggregates>? filterAction = null)
-        {
-            window = $@"window(every: {interval})";
-            if (filterAction != null)
-            {
-                Aggregate = new Aggregates();
-                filterAction.Invoke(Aggregate);
-            }
-            return this;
-        }
-
         public FluxQueryBuilder Functions(Action<Functions> filterAction)
         {
             Function = new Functions();
@@ -106,17 +85,10 @@ namespace Flux.Net
             return this;
         }
 
-        public FluxQueryBuilder Count()
-        {
-            limitRecords = "\n|> count() ";
-            return this;
-        }
-
         public FluxQueryBuilder Sort(bool desc, params string[] columns)
         {
-            var orderString = Convert.ToString(desc, CultureInfo.InvariantCulture).ToLowerInvariant();
             sortRecords = $@"
-|> sort(columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ], desc: {orderString}) ";
+|> sort(columns: [{string.Join(@" ,", columns.Select(s => { return $@"""{s}"""; }))} ], desc: {desc.ToFlux()}) ";
             return this;
         }
 
@@ -135,7 +107,6 @@ namespace Flux.Net
 
         public string ToQuery()
         {
-            var aggr = Aggregate?._Aggregates;
             var fun = Function?._Functions;
 
             if (!string.IsNullOrEmpty(group))
@@ -151,22 +122,6 @@ namespace Flux.Net
                 _stringBuilder.Append("\n");
                 //queryString = $@"{queryString} 
                 //                 {fun} ";
-            }
-
-            if (!string.IsNullOrEmpty(window))
-            {
-                _stringBuilder.Append(window);
-                _stringBuilder.Append("\n");
-                //queryString = $@"{queryString} 
-                //                 {window} ";
-            }
-
-            if (!string.IsNullOrEmpty(aggr))
-            {
-                _stringBuilder.Append(aggr);
-                _stringBuilder.Append("\n");
-                //queryString = $@"{queryString} 
-                //                 {aggr} ";
             }
 
             if (!string.IsNullOrEmpty(sortRecords))

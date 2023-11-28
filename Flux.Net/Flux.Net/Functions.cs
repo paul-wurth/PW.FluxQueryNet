@@ -1,6 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Flux.Net
 {
@@ -35,7 +33,7 @@ namespace Flux.Net
             }
             else
             {
-                val = $@"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
+                val = value.ToFlux();
             }
             _Functions = $@"{_Functions} 
 |> fill(column: ""{column}"", value: {val}) ";
@@ -58,7 +56,7 @@ namespace Flux.Net
             }
             else
             {
-                val = $@"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
+                val = value.ToFlux();
             }
             _Functions = $@"{_Functions} 
 |> fill(value: {val}) ";
@@ -174,7 +172,7 @@ namespace Flux.Net
             }
             else
             {
-                val = $@"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
+                val = value.ToFlux();
             }
             _Functions = $@"{_Functions} 
 |> stateDuration(fn: (r) => r.{column} == {val}, column: ""{column}"") ";
@@ -196,7 +194,7 @@ namespace Flux.Net
             }
             else
             {
-                val = $@"{Convert.ToString(value, CultureInfo.InvariantCulture)}";
+                val = value.ToFlux();
             }
             _Functions = $@"{_Functions} 
 |> stateCount(fn: (r) => r.{column} == {val}, column: ""{column}"") ";
