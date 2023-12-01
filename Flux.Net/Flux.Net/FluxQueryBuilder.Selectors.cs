@@ -1,4 +1,6 @@
-﻿namespace Flux.Net
+﻿using Flux.Net.Extensions;
+
+namespace Flux.Net
 {
     public partial class FluxQueryBuilder
     {
@@ -16,6 +18,96 @@
         /// <param name="column">Column to operate on. Default is <c>_value</c>.</param>
         /// <remarks>This drops empty tables.</remarks>
         public FluxQueryBuilder Last(string? column = null) => Aggregate("last", column);
+
+        /// <summary>
+        /// <para>Returns all records containing unique values in a specified <paramref name="column"/>.</para>
+        /// <para>Group keys, columns, and values are not modified.</para>
+        /// </summary>
+        /// <param name="column">Column to search for unique values. Default is <c>_value</c>.</param>
+        /// <remarks>This drops empty tables.</remarks>
+        public FluxQueryBuilder Unique(string? column = null) => Aggregate("unique", column);
+
+        /// <summary>
+        /// <para>Returns all unique values in a specified <paramref name="column"/>.</para>
+        /// <para>
+        /// The <c>_value</c> of each output record is set to a distinct value in the specified <paramref name="column"/>.<br/>
+        /// <see langword="null"/> is considered its own distinct value if present.
+        /// </para>
+        /// </summary>
+        /// <param name="column">Column to return unique values from. Default is <c>_value</c>.</param>
+        public FluxQueryBuilder Distinct(string? column = null) => Aggregate("distinct", column);
+
+        /// <summary>
+        /// Returns the row with the minimum value in a specified <paramref name="column"/> from each input table.
+        /// </summary>
+        /// <param name="column">Column to return minimum values from. Default is <c>_value</c>.</param>
+        /// <remarks>This drops empty tables.</remarks>
+        public FluxQueryBuilder Min(string? column = null) => Aggregate("min", column);
+
+        /// <summary>
+        /// Returns the row with the maximum value in a specified <paramref name="column"/> from each input table.
+        /// </summary>
+        /// <param name="column">Column to return maximum values from. Default is <c>_value</c>.</param>
+        /// <remarks>This drops empty tables.</remarks>
+        public FluxQueryBuilder Max(string? column = null) => Aggregate("max", column);
+
+        /// <summary>
+        /// Sorts each input table by specified <paramref name="columns"/> and keeps the top <paramref name="n"/> records in each table.
+        /// </summary>
+        /// <param name="n">Number of rows to return from each input table.</param>
+        /// <param name="columns">Columns to sort by. Sort precedence is determined by list order. Default is <c>["_value"]</c>.</param>
+        /// <remarks>This drops empty tables.</remarks>
+        public FluxQueryBuilder Top(int n, params string[] columns)
+        {
+            _stringBuilder.AppendLine();
+            _stringBuilder.Append("|> top(n: ").Append(n.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(")");
+            return this;
+        }
+
+        /// <summary>
+        /// Sorts each input table by specified <paramref name="columns"/> and keeps the bottom <paramref name="n"/> records in each table.
+        /// </summary>
+        /// <param name="n">Number of rows to return from each input table.</param>
+        /// <param name="columns">Columns to sort by. Sort precedence is determined by list order. Default is <c>["_value"]</c>.</param>
+        /// <remarks>This drops empty tables.</remarks>
+        public FluxQueryBuilder Bottom(int n, params string[] columns)
+        {
+            _stringBuilder.AppendLine();
+            _stringBuilder.Append("|> bottom(n: ").Append(n.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(")");
+            return this;
+        }
+
+        /// <summary>
+        /// Orders rows in each input table based on values in specified <paramref name="columns"/>.
+        /// </summary>
+        /// <param name="desc">Sort results in descending order.</param>
+        /// <param name="columns">Columns to sort by. Sort precedence is determined by list order. Default is <c>["_value"]</c>.</param>
+        /// <returns></returns>
+        public FluxQueryBuilder Sort(bool desc, params string[] columns)
+        {
+            _stringBuilder.AppendLine();
+            _stringBuilder.Append("|> sort(desc: ").Append(desc.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(")");
+            return this;
+        }
+
+        /// <summary>
+        /// Returns the first <paramref name="n"/> rows after the specified <paramref name="offset"/> from each input table.
+        /// </summary>
+        /// <param name="n">Maximum number of rows to return.</param>
+        /// <param name="offset">Number of rows to skip per table before limiting to <paramref name="n"/>. Default is <c>0</c>.</param>
+        /// <remarks>If an input table has less than <c>offset + n</c> rows, it returns all rows after the <paramref name="offset"/>.</remarks>
+        public FluxQueryBuilder Limit(int n, int? offset = null)
+        {
+            _stringBuilder.AppendLine();
+            _stringBuilder.Append("|> limit(n: ").Append(n.ToFlux());
+
+            if (offset.HasValue)
+                _stringBuilder.Append(", offset: ").Append(offset.Value.ToFlux());
+
+            _stringBuilder.Append(")");
+            return this;
+        }
+
 
         /// <summary>
         /// <para>Replaces all <see langword="null"/> values in input tables with a non-<see langword="null"/> value.</para>
@@ -51,24 +143,6 @@
             _stringBuilder.Append(")");
             return this;
         }
-
-        /// <summary>
-        /// <para>Returns all records containing unique values in a specified <paramref name="column"/>.</para>
-        /// <para>Group keys, columns, and values are not modified.</para>
-        /// </summary>
-        /// <param name="column">Column to search for unique values. Default is <c>_value</c>.</param>
-        /// <remarks>This drops empty tables.</remarks>
-        public FluxQueryBuilder Unique(string? column = null) => Aggregate("unique", column);
-
-        /// <summary>
-        /// <para>Returns all unique values in a specified <paramref name="column"/>.</para>
-        /// <para>
-        /// The <c>_value</c> of each output record is set to a distinct value in the specified <paramref name="column"/>.<br/>
-        /// <see langword="null"/> is considered its own distinct value if present.
-        /// </para>
-        /// </summary>
-        /// <param name="column">Column to return unique values from. Default is <c>_value</c>.</param>
-        public FluxQueryBuilder Distinct(string? column = null) => Aggregate("distinct", column);
 
         /// <summary>
         /// Regroups input data by modifying group key of input tables.
@@ -118,63 +192,6 @@
         {
             _stringBuilder.AppendLine();
             _stringBuilder.Append("|> drop(").AppendStringArrayParameter("columns", columns).Append(")");
-            return this;
-        }
-
-        /// <summary>
-        /// Orders rows in each input table based on values in specified <paramref name="columns"/>.
-        /// </summary>
-        /// <param name="desc">Sort results in descending order.</param>
-        /// <param name="columns">Columns to sort by. Sort precedence is determined by list order. Default is <c>["_value"]</c>.</param>
-        /// <returns></returns>
-        public FluxQueryBuilder Sort(bool desc, params string[] columns)
-        {
-            _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> sort(desc: ").Append(desc.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(")");
-            return this;
-        }
-
-        /// <summary>
-        /// Sorts each input table by specified <paramref name="columns"/> and keeps the top <paramref name="n"/> records in each table.
-        /// </summary>
-        /// <param name="n">Number of rows to return from each input table.</param>
-        /// <param name="columns">Columns to sort by. Sort precedence is determined by list order. Default is <c>["_value"]</c>.</param>
-        /// <remarks>This drops empty tables.</remarks>
-        public FluxQueryBuilder Top(int n, params string[] columns)
-        {
-            _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> top(n: ").Append(n.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(")");
-            return this;
-        }
-
-        /// <summary>
-        /// Sorts each input table by specified <paramref name="columns"/> and keeps the bottom <paramref name="n"/> records in each table.
-        /// </summary>
-        /// <param name="n">Number of rows to return from each input table.</param>
-        /// <param name="columns">Columns to sort by. Sort precedence is determined by list order. Default is <c>["_value"]</c>.</param>
-        /// <remarks>This drops empty tables.</remarks>
-        public FluxQueryBuilder Bottom(int n, params string[] columns)
-        {
-            _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> bottom(n: ").Append(n.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(")");
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the first <paramref name="n"/> rows after the specified <paramref name="offset"/> from each input table.
-        /// </summary>
-        /// <param name="n">Maximum number of rows to return.</param>
-        /// <param name="offset">Number of rows to skip per table before limiting to <paramref name="n"/>. Default is <c>0</c>.</param>
-        /// <remarks>If an input table has less than <c>offset + n</c> rows, it returns all rows after the <paramref name="offset"/>.</remarks>
-        public FluxQueryBuilder Limit(int n, int? offset = null)
-        {
-            _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> limit(n: ").Append(n.ToFlux());
-
-            if (offset.HasValue)
-                _stringBuilder.Append(", offset: ").Append(offset.Value.ToFlux());
-
-            _stringBuilder.Append(")");
             return this;
         }
 

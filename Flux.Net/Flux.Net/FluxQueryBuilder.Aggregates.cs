@@ -1,4 +1,6 @@
-﻿namespace Flux.Net
+﻿using Flux.Net.Extensions;
+
+namespace Flux.Net
 {
     public partial class FluxQueryBuilder
     {
@@ -20,26 +22,6 @@
         }
 
         /// <summary>
-        /// Returns the average of non-<see langword="null"/> values in a specified <paramref name="column"/> from each input table.
-        /// </summary>
-        /// <param name="column">Column to use to compute means. Default is <c>_value</c>.</param>
-        public FluxQueryBuilder Mean(string? column = null) => Aggregate("mean", column);
-
-        /// <summary>
-        /// Returns the row with the minimum value in a specified <paramref name="column"/> from each input table.
-        /// </summary>
-        /// <param name="column">Column to return minimum values from. Default is <c>_value</c>.</param>
-        /// <remarks>This drops empty tables.</remarks>
-        public FluxQueryBuilder Min(string? column = null) => Aggregate("min", column);
-
-        /// <summary>
-        /// Returns the row with the maximum value in a specified <paramref name="column"/> from each input table.
-        /// </summary>
-        /// <param name="column">Column to return maximum values from. Default is <c>_value</c>.</param>
-        /// <remarks>This drops empty tables.</remarks>
-        public FluxQueryBuilder Max(string? column = null) => Aggregate("max", column);
-
-        /// <summary>
         /// Returns the sum of non-<see langword="null"/> values in a specified <paramref name="column"/>.
         /// </summary>
         /// <param name="column">Column to operate on. Default is <c>_value</c>.</param>
@@ -54,19 +36,10 @@
         public FluxQueryBuilder Count(string? column = null) => Aggregate("count", column);
 
         /// <summary>
-        /// <para>Returns the non-<see langword="null"/> value or values that occur most often in a specified <paramref name="column"/> in each input table.</para>
-        /// <para>If there are multiple modes, it returns all mode values in a sorted table. If there is no mode, it returns <see langword="null"/>.</para>
+        /// Returns the average of non-<see langword="null"/> values in a specified <paramref name="column"/> from each input table.
         /// </summary>
-        /// <param name="column">Column to return the mode from. Default is <c>_value</c>.</param>
-        /// <remarks>This drops empty tables.</remarks>
-        public FluxQueryBuilder Mode(string? column = null) => Aggregate("mode", column);
-
-        /// <summary>
-        /// Returns the difference between the minimum and maximum values in a specified <paramref name="column"/>.
-        /// </summary>
-        /// <param name="column">Column to operate on. Default is <c>_value</c>.</param>
-        public FluxQueryBuilder Spread(string? column = null) => Aggregate("spread", column);
-
+        /// <param name="column">Column to use to compute means. Default is <c>_value</c>.</param>
+        public FluxQueryBuilder Mean(string? column = null) => Aggregate("mean", column);
 
         /// <summary>
         /// Calculates the mean of non-<see langword="null"/> values using the current value and <c>n - 1</c> previous values in the <c>_value</c> column.
@@ -85,7 +58,6 @@
         {
             _stringBuilder.AppendLine();
             _stringBuilder.Append("|> movingAverage(n: ").Append(n.ToFlux()).Append(")");
-
             return this;
         }
 
@@ -111,6 +83,21 @@
             _stringBuilder.Append(")");
             return this;
         }
+
+        /// <summary>
+        /// <para>Returns the non-<see langword="null"/> value or values that occur most often in a specified <paramref name="column"/> in each input table.</para>
+        /// <para>If there are multiple modes, it returns all mode values in a sorted table. If there is no mode, it returns <see langword="null"/>.</para>
+        /// </summary>
+        /// <param name="column">Column to return the mode from. Default is <c>_value</c>.</param>
+        /// <remarks>This drops empty tables.</remarks>
+        public FluxQueryBuilder Mode(string? column = null) => Aggregate("mode", column);
+
+        /// <summary>
+        /// Returns the difference between the minimum and maximum values in a specified <paramref name="column"/>.
+        /// </summary>
+        /// <param name="column">Column to operate on. Default is <c>_value</c>.</param>
+        public FluxQueryBuilder Spread(string? column = null) => Aggregate("spread", column);
+
 
         /// <summary>
         /// Groups records using regular time intervals.

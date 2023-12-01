@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Flux.Net
+namespace Flux.Net.Extensions
 {
     internal static class StringBuilderExtensions
     {
