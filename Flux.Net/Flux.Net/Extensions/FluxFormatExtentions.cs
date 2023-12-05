@@ -22,6 +22,13 @@ namespace Flux.Net.Extensions
             ZonedDateTime d => d.ToFlux(),
             LocalDateTime d => d.ToFlux(),
             bool b => b.ToFlux(),
+            byte b => b.ToFlux(),
+            ushort u => u.ToFlux(),
+            uint u => u.ToFlux(),
+            ulong u => u.ToFlux(),
+            float f => f.ToFlux(),
+            double d => d.ToFlux(),
+            decimal d => d.ToFlux(),
             string s => s.ToFlux(),
             _ => Convert.ToString(value, CultureInfo.InvariantCulture)!
         };
@@ -36,7 +43,56 @@ namespace Flux.Net.Extensions
             return $"\"{value}\"";
         }
 
+        #region Floating-point number
+
+        // See https://docs.influxdata.com/flux/latest/data-types/basic/float/
+
+        public static string ToFlux(this float value) => WithFloatConversion(value switch
+        {
+            float.PositiveInfinity => "+Inf",
+            float.NegativeInfinity => "-Inf",
+            _ => value.ToString(CultureInfo.InvariantCulture)
+        });
+
+        public static string ToFlux(this double value) => WithFloatConversion(value switch
+        {
+            double.PositiveInfinity => "+Inf",
+            double.NegativeInfinity => "-Inf",
+            _ => value.ToString(CultureInfo.InvariantCulture)
+        });
+
+        public static string ToFlux(this decimal value) => WithFloatConversion(value.ToString(CultureInfo.InvariantCulture));
+
+        /// <summary>
+        /// Ensures support for floating numbers without decimal point (eg. <c>123</c>),
+        /// scientific notation (eg. <c>1.23e+4</c>), <c>+Inf</c>, <c>-Inf</c> and <c>NaN</c>.
+        /// </summary>
+        private static string WithFloatConversion(string value) => $"float(v: \"{value}\")";
+
+        #endregion
+
+        #region Unsigned integer
+
+        // See https://docs.influxdata.com/flux/latest/data-types/basic/uint/
+
+        public static string ToFlux(this byte value) => WithUintConversion(value.ToString(CultureInfo.InvariantCulture));
+
+        public static string ToFlux(this ushort value) => WithUintConversion(value.ToString(CultureInfo.InvariantCulture));
+
+        public static string ToFlux(this uint value) => WithUintConversion(value.ToString(CultureInfo.InvariantCulture));
+
+        public static string ToFlux(this ulong value) => WithUintConversion(value.ToString(CultureInfo.InvariantCulture));
+
+        /// <summary>
+        /// Ensures support for unsigned integers.
+        /// </summary>
+        private static string WithUintConversion(string value) => $"uint(v: \"{value}\")";
+
+        #endregion
+
         #region Date and time
+
+        // See https://docs.influxdata.com/flux/latest/data-types/basic/time/
 
         public static string ToFlux(this DateTime date)
         {
