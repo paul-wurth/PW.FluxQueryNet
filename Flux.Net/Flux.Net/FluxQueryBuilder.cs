@@ -1,6 +1,4 @@
-﻿using Flux.Net.Extensions;
-using NodaTime;
-using System;
+﻿using System;
 using System.Text;
 
 namespace Flux.Net
@@ -18,7 +16,7 @@ namespace Flux.Net
             _stringBuilder = new StringBuilder("from(bucket: \"").Append(bucket);
 
             if (!string.IsNullOrWhiteSpace(retentionPolicy))
-                _stringBuilder.Append("/").Append(retentionPolicy);
+                _stringBuilder.Append('/').Append(retentionPolicy);
 
             _stringBuilder.Append("\")");
         }
@@ -27,41 +25,15 @@ namespace Flux.Net
 
         #region Time range
 
-        public FluxQueryBuilder RelativeTimeRange(TimeSpan start, TimeSpan? end = null)
-            => Range(start.ToFlux(), end?.ToFlux());
-
-        public FluxQueryBuilder RelativeTimeRange(Duration start, Duration? end = null)
-            => Range(start.ToFlux(), end?.ToFlux());
-
-        public FluxQueryBuilder AbsoluteTimeRange(Instant start, Instant? end = null)
-            => Range(start.ToFlux(), end?.ToFlux());
-
-        public FluxQueryBuilder AbsoluteTimeRange(OffsetDateTime start, OffsetDateTime? end = null)
-            => Range(start.ToFlux(), end?.ToFlux());
-
-        public FluxQueryBuilder AbsoluteTimeRange(ZonedDateTime start, ZonedDateTime? end = null)
-            => Range(start.ToFlux(), end?.ToFlux());
-
-        public FluxQueryBuilder AbsoluteTimeRange(DateTime start, DateTime? end = null)
-            => Range(start.ToFlux(), end?.ToFlux());
-
-        public FluxQueryBuilder AbsoluteTimeRange(DateTimeOffset start, DateTimeOffset? end = null)
-            => Range(start.ToFlux(), end?.ToFlux());
-
-#if NET6_0_OR_GREATER
-        public FluxQueryBuilder AbsoluteTimeRange(DateOnly start, DateOnly? end = null)
-            => Range(start.ToFlux(), end?.ToFlux());
-#endif
-
-        private FluxQueryBuilder Range(string start, string? end)
+        public FluxQueryBuilder Range(FluxTime start, FluxTime? end = null)
         {
             _stringBuilder.AppendLine();
             _stringBuilder.Append("|> range(start: ").Append(start);
 
-            if (!string.IsNullOrEmpty(end))
+            if (end != null)
                 _stringBuilder.Append(", stop: ").Append(end);
 
-            _stringBuilder.Append(")");
+            _stringBuilder.Append(')');
             return this;
         }
 
@@ -77,7 +49,7 @@ namespace Flux.Net
             var filter = new FluxFilter(_stringBuilder);
             filterAction.Invoke(filter);
 
-            _stringBuilder.Append(")");
+            _stringBuilder.Append(')');
             return this;
         }
 
