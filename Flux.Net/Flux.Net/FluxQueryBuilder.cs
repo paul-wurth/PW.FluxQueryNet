@@ -1,7 +1,6 @@
 ﻿using Flux.Net.Extensions;
 using NodaTime;
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Flux.Net
@@ -28,7 +27,10 @@ namespace Flux.Net
 
         #region Time range
 
-        public FluxQueryBuilder RelativeTimeRange(KeyValuePair<TimeUnit, double> start, KeyValuePair<TimeUnit, double>? end = null)
+        public FluxQueryBuilder RelativeTimeRange(TimeSpan start, TimeSpan? end = null)
+            => Range(start.ToFlux(), end?.ToFlux());
+
+        public FluxQueryBuilder RelativeTimeRange(Duration start, Duration? end = null)
             => Range(start.ToFlux(), end?.ToFlux());
 
         public FluxQueryBuilder AbsoluteTimeRange(Instant start, Instant? end = null)
@@ -42,6 +44,14 @@ namespace Flux.Net
 
         public FluxQueryBuilder AbsoluteTimeRange(DateTime start, DateTime? end = null)
             => Range(start.ToFlux(), end?.ToFlux());
+
+        public FluxQueryBuilder AbsoluteTimeRange(DateTimeOffset start, DateTimeOffset? end = null)
+            => Range(start.ToFlux(), end?.ToFlux());
+
+#if NET6_0_OR_GREATER
+        public FluxQueryBuilder AbsoluteTimeRange(DateOnly start, DateOnly? end = null)
+            => Range(start.ToFlux(), end?.ToFlux());
+#endif
 
         private FluxQueryBuilder Range(string start, string? end)
         {
