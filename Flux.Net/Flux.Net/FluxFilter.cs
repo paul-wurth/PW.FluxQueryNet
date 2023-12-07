@@ -32,7 +32,7 @@ namespace Flux.Net
         public FluxFilter Measurement(string measurement)
         {
             AppendAndIfNeeded();
-            _stringBuilder.Append("r._measurement == \"").Append(measurement).Append("\"");
+            _stringBuilder.Append("r._measurement == \"").Append(measurement).Append('"');
 
             return this;
         }
@@ -40,7 +40,7 @@ namespace Flux.Net
         public FluxFilter Tag(string tagKey, string tagValue)
         {
             AppendAndIfNeeded();
-            _stringBuilder.Append("r[\"").Append(tagKey).Append("\"] == \"").Append(tagValue).Append("\"");
+            _stringBuilder.Append("r[\"").Append(tagKey).Append("\"] == \"").Append(tagValue).Append('"');
 
             return this;
         }
@@ -63,15 +63,15 @@ namespace Flux.Net
 
             AppendAndIfNeeded();
 
-            _stringBuilder.Append("(");
+            _stringBuilder.Append('(');
             for (int i = 0; i < fields.Length; i++)
             {
                 if (i > 0)
                     _stringBuilder.Append(" or ");
 
-                _stringBuilder.Append("r._field == \"").Append(fields[i]).Append("\"");
+                _stringBuilder.Append("r._field == \"").Append(fields[i]).Append('"');
             }
-            _stringBuilder.Append(")");
+            _stringBuilder.Append(')');
 
             return this;
         }

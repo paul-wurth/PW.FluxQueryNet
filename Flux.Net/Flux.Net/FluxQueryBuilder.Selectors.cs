@@ -60,7 +60,7 @@ namespace Flux.Net
         public FluxQueryBuilder Top(int n, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> top(n: ").Append(n.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(")");
+            _stringBuilder.Append("|> top(n: ").Append(n.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(')');
             return this;
         }
 
@@ -73,7 +73,7 @@ namespace Flux.Net
         public FluxQueryBuilder Bottom(int n, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> bottom(n: ").Append(n.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(")");
+            _stringBuilder.Append("|> bottom(n: ").Append(n.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(')');
             return this;
         }
 
@@ -86,7 +86,7 @@ namespace Flux.Net
         public FluxQueryBuilder Sort(bool desc, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> sort(desc: ").Append(desc.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(")");
+            _stringBuilder.Append("|> sort(desc: ").Append(desc.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(')');
             return this;
         }
 
@@ -104,7 +104,7 @@ namespace Flux.Net
             if (offset.HasValue)
                 _stringBuilder.Append(", offset: ").Append(offset.Value.ToFlux());
 
-            _stringBuilder.Append(")");
+            _stringBuilder.Append(')');
             return this;
         }
 
@@ -121,9 +121,9 @@ namespace Flux.Net
             _stringBuilder.Append("|> fill(value: ").Append(value.ToFlux());
 
             if (!string.IsNullOrWhiteSpace(column))
-                _stringBuilder.Append(", column: \"").Append(column).Append("\"");
+                _stringBuilder.Append(", column: \"").Append(column).Append('"');
 
-            _stringBuilder.Append(")");
+            _stringBuilder.Append(')');
             return this;
         }
 
@@ -138,9 +138,9 @@ namespace Flux.Net
             _stringBuilder.Append("|> fill(usePrevious: true");
 
             if (!string.IsNullOrWhiteSpace(column))
-                _stringBuilder.Append(", column: \"").Append(column).Append("\"");
+                _stringBuilder.Append(", column: \"").Append(column).Append('"');
 
-            _stringBuilder.Append(")");
+            _stringBuilder.Append(')');
             return this;
         }
 
@@ -152,7 +152,7 @@ namespace Flux.Net
         public FluxQueryBuilder Group(params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> group(").AppendStringArrayParameter("columns", columns).Append(")");
+            _stringBuilder.Append("|> group(").AppendStringArrayParameter("columns", columns).Append(')');
             return this;
         }
 
@@ -164,7 +164,7 @@ namespace Flux.Net
         public FluxQueryBuilder GroupExcept(params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> group(mode: \"except\"").AppendStringArrayParameter("columns", columns, true).Append(")");
+            _stringBuilder.Append("|> group(mode: \"except\"").AppendStringArrayParameter("columns", columns, true).Append(')');
             return this;
         }
 
@@ -177,7 +177,7 @@ namespace Flux.Net
         public FluxQueryBuilder Keep(params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> keep(").AppendStringArrayParameter("columns", columns).Append(")");
+            _stringBuilder.Append("|> keep(").AppendStringArrayParameter("columns", columns).Append(')');
             return this;
         }
 
@@ -191,7 +191,7 @@ namespace Flux.Net
         public FluxQueryBuilder Drop(params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> drop(").AppendStringArrayParameter("columns", columns).Append(")");
+            _stringBuilder.Append("|> drop(").AppendStringArrayParameter("columns", columns).Append(')');
             return this;
         }
 
@@ -204,10 +204,10 @@ namespace Flux.Net
         public FluxQueryBuilder Pivot(string[] rowKey, string[] columnKey, string valueColumn = "_value")
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> pivot(valueColumn: \"").Append(valueColumn).Append("\"")
+            _stringBuilder.Append("|> pivot(valueColumn: \"").Append(valueColumn).Append('"')
                 .AppendStringArrayParameter("rowKey", rowKey, true)
                 .AppendStringArrayParameter("columnKey", columnKey, true)
-                .Append(")");
+                .Append(')');
             return this;
         }
     }

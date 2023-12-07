@@ -12,12 +12,12 @@ namespace Flux.Net
         public FluxQueryBuilder Aggregate(string methodName, string? column = null)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> ").Append(methodName).Append("(");
+            _stringBuilder.Append("|> ").Append(methodName).Append('(');
 
             if (!string.IsNullOrWhiteSpace(column))
-                _stringBuilder.Append("column: \"").Append(column).Append("\"");
+                _stringBuilder.Append("column: \"").Append(column).Append('"');
 
-            _stringBuilder.Append(")");
+            _stringBuilder.Append(')');
             return this;
         }
 
@@ -57,7 +57,7 @@ namespace Flux.Net
         public FluxQueryBuilder MovingAverage(int n)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> movingAverage(n: ").Append(n.ToFlux()).Append(")");
+            _stringBuilder.Append("|> movingAverage(n: ").Append(n.ToFlux()).Append(')');
             return this;
         }
 
@@ -78,9 +78,9 @@ namespace Flux.Net
             _stringBuilder.Append("|> timedMovingAverage(every: ").Append(every).Append(", period: ").Append(period);
 
             if (!string.IsNullOrWhiteSpace(column))
-                _stringBuilder.Append(", column: \"").Append(column).Append("\"");
+                _stringBuilder.Append(", column: \"").Append(column).Append('"');
 
-            _stringBuilder.Append(")");
+            _stringBuilder.Append(')');
             return this;
         }
 
@@ -126,15 +126,15 @@ namespace Flux.Net
                 _stringBuilder.Append(", location: ").Append(location);
 
             if (!string.IsNullOrWhiteSpace(timeColumn))
-                _stringBuilder.Append(", timeColumn: \"").Append(timeColumn).Append("\"");
+                _stringBuilder.Append(", timeColumn: \"").Append(timeColumn).Append('"');
 
             if (!string.IsNullOrWhiteSpace(startColumn))
-                _stringBuilder.Append(", startColumn: \"").Append(startColumn).Append("\"");
+                _stringBuilder.Append(", startColumn: \"").Append(startColumn).Append('"');
 
             if (!string.IsNullOrWhiteSpace(stopColumn))
-                _stringBuilder.Append(", stopColumn: \"").Append(stopColumn).Append("\"");
+                _stringBuilder.Append(", stopColumn: \"").Append(stopColumn).Append('"');
 
-            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFlux()).Append(")");
+            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFlux()).Append(')');
             return this;
         }
 
@@ -169,15 +169,15 @@ namespace Flux.Net
                 _stringBuilder.Append(", location: ").Append(location);
 
             if (!string.IsNullOrWhiteSpace(column))
-                _stringBuilder.Append(", column: \"").Append(column).Append("\"");
+                _stringBuilder.Append(", column: \"").Append(column).Append('"');
 
             if (!string.IsNullOrWhiteSpace(timeSrcColumn))
-                _stringBuilder.Append(", timeSrc: \"").Append(timeSrcColumn).Append("\"");
+                _stringBuilder.Append(", timeSrc: \"").Append(timeSrcColumn).Append('"');
 
             if (!string.IsNullOrWhiteSpace(timeDstColumn))
-                _stringBuilder.Append(", timeDst: \"").Append(timeDstColumn).Append("\"");
+                _stringBuilder.Append(", timeDst: \"").Append(timeDstColumn).Append('"');
 
-            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFlux()).Append(")");
+            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFlux()).Append(')');
             return this;
         }
     }

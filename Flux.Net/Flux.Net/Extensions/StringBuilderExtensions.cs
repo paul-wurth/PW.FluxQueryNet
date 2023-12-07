@@ -19,9 +19,9 @@ namespace Flux.Net.Extensions
                 if (i > 0)
                     stringBuilder.Append(", ");
 
-                stringBuilder.Append("\"").Append(values[i]).Append("\"");
+                stringBuilder.Append('"').Append(values[i]).Append('"');
             }
-            return stringBuilder.Append("]");
+            return stringBuilder.Append(']');
         }
     }
 }
