@@ -72,7 +72,7 @@ namespace Flux.Net
         /// including calendar months (<c>1mo</c>) and years (<c>1y</c>).<br/> When aggregating by week (<c>1w</c>), all calculated weeks begin on Thursday
         /// since weeks are determined using the Unix epoch (1970-01-01 00:00:00 UTC) which was a Thursday.
         /// </remarks>
-        public FluxQueryBuilder TimedMovingAverage(string every, string period, string? column = null)
+        public FluxQueryBuilder TimedMovingAverage(FluxDuration every, FluxDuration period, string? column = null)
         {
             _stringBuilder.AppendLine();
             _stringBuilder.Append("|> timedMovingAverage(every: ").Append(every).Append(", period: ").Append(period);
@@ -110,16 +110,16 @@ namespace Flux.Net
         /// <param name="startColumn">Column to store the window start time in. Default is <c>_start</c>.</param>
         /// <param name="stopColumn">Column to store the window stop time in. Default is <c>_stop</c>.</param>
         /// <param name="createEmpty">Create empty tables for empty window. Default is <see langword="false"/>.</param>
-        public FluxQueryBuilder Window(string every, string? period = null, string? offset = null,
+        public FluxQueryBuilder Window(FluxDuration every, FluxDuration? period = null, FluxDuration? offset = null,
             string? location = null, string? timeColumn = null, string? startColumn = null, string? stopColumn = null, bool createEmpty = false)
         {
             _stringBuilder.AppendLine();
             _stringBuilder.Append("|> window(every: ").Append(every);
 
-            if (!string.IsNullOrWhiteSpace(period))
+            if (period != null)
                 _stringBuilder.Append(", period: ").Append(period);
 
-            if (!string.IsNullOrWhiteSpace(offset))
+            if (offset != null)
                 _stringBuilder.Append(", offset: ").Append(offset);
 
             if (!string.IsNullOrWhiteSpace(location))
@@ -153,16 +153,16 @@ namespace Flux.Net
         /// Create empty tables for empty window. Default is <see langword="true"/>.<br/>
         /// When <see langword="true"/>, aggregate functions return empty tables, but selector functions do not. By design, selectors drop empty tables.
         /// </param>
-        public FluxQueryBuilder AggregateWindow(string aggregateFunction, string every, string? period = null, string? offset = null,
+        public FluxQueryBuilder AggregateWindow(string aggregateFunction, FluxDuration every, FluxDuration? period = null, FluxDuration? offset = null,
             string? location = null, string? column = null, string? timeSrcColumn = null, string? timeDstColumn = null, bool createEmpty = true)
         {
             _stringBuilder.AppendLine();
             _stringBuilder.Append("|> aggregateWindow(fn: ").Append(aggregateFunction).Append(", every: ").Append(every);
 
-            if (!string.IsNullOrWhiteSpace(period))
+            if (period != null)
                 _stringBuilder.Append(", period: ").Append(period);
 
-            if (!string.IsNullOrWhiteSpace(offset))
+            if (offset != null)
                 _stringBuilder.Append(", offset: ").Append(offset);
 
             if (!string.IsNullOrWhiteSpace(location))
