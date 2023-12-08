@@ -23,6 +23,7 @@ namespace Flux.Net
         /// <para>Use a duration relative to <c>now()</c> (eg. <see cref="TimeSpan"/> or <see cref="Duration"/>) or an absolute time
         /// (eg. <see cref="DateTime"/>, <see cref="DateTimeOffset"/>, <see cref="Instant"/>, <see cref="OffsetDateTime"/>, etc.).</para>
         /// </param>
+        /// <seealso href="https://docs.influxdata.com/flux/latest/stdlib/universe/range/">range() function - InfluxDB documentation</seealso>
         public FluxQueryBuilder Range(FluxTime start, FluxTime? end = null)
         {
             _stringBuilder.AppendLine();
@@ -39,6 +40,7 @@ namespace Flux.Net
         /// Filters data based on conditions defined in a predicate function.
         /// </summary>
         /// <param name="filterAction">An action to specify the predicate function that evaluates <see langword="true"/> or <see langword="false"/>.</param>
+        /// <seealso href="https://docs.influxdata.com/flux/latest/stdlib/universe/filter/">filter() function - InfluxDB documentation</seealso>
         public FluxQueryBuilder Filter(Action<FluxFilter> filterAction)
         {
             _stringBuilder.AppendLine();

@@ -4,6 +4,15 @@ using System;
 
 namespace Flux.Net
 {
+    /// <summary>
+    /// Represents a single point in time in Flux with nanosecond precision.
+    /// </summary>
+    /// <remarks>
+    /// This can only be obtained by the implicit conversion of a <see cref="DateTime"/>, <see cref="DateTimeOffset"/>,
+    /// <see cref="Instant"/>, <see cref="OffsetDateTime"/>, <see cref="ZonedDateTime"/>, <see cref="LocalDateTime"/>,
+    /// or a duration relative to <c>now()</c>, such as <see cref="TimeSpan"/> or <see cref="Duration"/>.
+    /// </remarks>
+    /// <seealso href="https://docs.influxdata.com/flux/latest/data-types/basic/time/">Time - InfluxDB documentation</seealso>
     public sealed class FluxTime
     {
         private readonly object _value;

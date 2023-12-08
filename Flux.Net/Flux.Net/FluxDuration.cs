@@ -4,6 +4,13 @@ using System;
 
 namespace Flux.Net
 {
+    /// <summary>
+    /// Represents a length of time in Flux with nanosecond precision.
+    /// </summary>
+    /// <remarks>
+    /// This can only be obtained by the implicit conversion of a <see cref="TimeSpan"/> or <see cref="Duration"/>.
+    /// </remarks>
+    /// <seealso href="https://docs.influxdata.com/flux/latest/data-types/basic/duration/">Duration - InfluxDB documentation</seealso>
     public sealed class FluxDuration
     {
         private readonly object _value;
