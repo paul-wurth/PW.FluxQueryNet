@@ -7,21 +7,7 @@ namespace Flux.Net
     {
         private readonly StringBuilder _stringBuilder;
 
-        #region From
-
-        public static FluxQueryBuilder From(string bucket, string? retentionPolicy = null) => new(bucket, retentionPolicy);
-
-        private FluxQueryBuilder(string bucket, string? retentionPolicy)
-        {
-            _stringBuilder = new StringBuilder("from(bucket: \"").Append(bucket);
-
-            if (!string.IsNullOrWhiteSpace(retentionPolicy))
-                _stringBuilder.Append('/').Append(retentionPolicy);
-
-            _stringBuilder.Append("\")");
-        }
-
-        #endregion
+        private FluxQueryBuilder(StringBuilder stringBuilder) => _stringBuilder = stringBuilder;
 
         #region Time range
 
