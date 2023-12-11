@@ -1,4 +1,5 @@
 ﻿using NodaTime;
+using PW.FluxQueryNet.Extensions;
 using System;
 
 namespace PW.FluxQueryNet
@@ -28,9 +29,13 @@ namespace PW.FluxQueryNet
         {
             _stringBuilder.AppendLine();
             _stringBuilder.Append("|> range(start: ").Append(start);
+            _packages.AddIfNotNull(start.GetPackage());
 
             if (end != null)
+            {
                 _stringBuilder.Append(", stop: ").Append(end);
+                _packages.AddIfNotNull(end.GetPackage());
+            }
 
             _stringBuilder.Append(')');
             return this;

@@ -13,12 +13,14 @@ namespace PW.FluxQueryNet
     /// <seealso href="https://docs.influxdata.com/flux/latest/data-types/basic/duration/">Duration - InfluxDB documentation</seealso>
     public sealed class FluxDuration
     {
-        private readonly object _value;
-        private FluxDuration(object value) => _value = value;
+        private readonly string _value;
 
-        public static implicit operator FluxDuration(TimeSpan value) => new(value);
-        public static implicit operator FluxDuration(Duration value) => new(value);
+        private FluxDuration(string value) => _value = value;
 
-        public override string ToString() => _value.ToFlux();
+        public override string ToString() => _value;
+
+
+        public static implicit operator FluxDuration(TimeSpan value) => new(value.ToFlux());
+        public static implicit operator FluxDuration(Duration value) => new(value.ToFlux());
     }
 }
