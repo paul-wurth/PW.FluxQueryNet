@@ -1,6 +1,6 @@
-﻿using Flux.Net.Extensions;
+﻿using PW.FluxQueryNet.Extensions;
 
-namespace Flux.Net
+namespace PW.FluxQueryNet
 {
     public partial class FluxQueryBuilder
     {

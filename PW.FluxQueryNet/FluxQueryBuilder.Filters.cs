@@ -1,7 +1,7 @@
 ﻿using NodaTime;
 using System;
 
-namespace Flux.Net
+namespace PW.FluxQueryNet
 {
     public partial class FluxQueryBuilder
     {

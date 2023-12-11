@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Flux.Net
+namespace PW.FluxQueryNet
 {
     public class FluxFilter
     {

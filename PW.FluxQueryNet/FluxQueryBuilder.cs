@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Flux.Net
+namespace PW.FluxQueryNet
 {
     public partial class FluxQueryBuilder
     {

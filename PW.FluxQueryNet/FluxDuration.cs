@@ -1,8 +1,8 @@
-﻿using Flux.Net.Extensions;
-using NodaTime;
+﻿using NodaTime;
+using PW.FluxQueryNet.Extensions;
 using System;
 
-namespace Flux.Net
+namespace PW.FluxQueryNet
 {
     /// <summary>
     /// Represents a length of time in Flux with nanosecond precision.

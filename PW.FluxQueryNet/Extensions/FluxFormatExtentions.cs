@@ -4,7 +4,7 @@ using System;
 using System.Globalization;
 using System.Text;
 
-namespace Flux.Net.Extensions
+namespace PW.FluxQueryNet.Extensions
 {
     public static class FluxFormatExtentions
     {

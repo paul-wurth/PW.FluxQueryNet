@@ -12,16 +12,14 @@
 	<PropertyGroup>
 		<!-- Package properties -->
 		<PackageId>PW.FluxQueryNet</PackageId>
-		<Product>FluxQuery.Net</Product>
-		<RootNamespace>Flux.Net</RootNamespace>
 		<Version>1.0.5</Version>
 		<Authors>Malik Rizwan Bashir,Marc Weydert,Sylvain Bruyère</Authors>
 		<Company>Paul Wurth S.A.</Company>
-		<Description>Flux query builder client library for .NET. Forked from Flux.Net by Malik Rizwan Bashir.</Description>
+		<Description>Flux query builder fluent API for .NET. Forked from Flux.Net by Malik Rizwan Bashir.</Description>
 		<Copyright>Copyright © Malik Rizwan Bashir. Copyright © Paul Wurth S.A. $([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/paul-wurth/PW.FluxQueryNet</RepositoryUrl>
-		<PackageProjectUrl>https://github.com/MalikRizwanBashir/Flux.Net</PackageProjectUrl>
+		<PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 
@@ -35,7 +33,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 </Project>
