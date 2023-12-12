@@ -3,14 +3,19 @@ using System.Text;
 
 namespace PW.FluxQueryNet
 {
-    public partial class FluxQueryBuilder
+    public partial class FluxQueryBuilder : IFluxSource, IFluxStream
     {
         private readonly HashSet<string> _packages = new();
-        private readonly StringBuilder _stringBuilder;
+        private readonly StringBuilder _stringBuilder = new();
 
-        private FluxQueryBuilder(StringBuilder stringBuilder) => _stringBuilder = stringBuilder;
+        private FluxQueryBuilder() { }
 
+        /// <summary>
+        /// Creates a <see cref="FluxQueryBuilder"/> to generate a Flux query.
+        /// </summary>
+        public static IFluxSource Create() => new FluxQueryBuilder();
 
+        /// <inheritdoc/>
         public string ToQuery()
         {
             if (_packages.Count < 1)

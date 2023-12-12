@@ -6,7 +6,8 @@ Forked from [this project](https://github.com/MalikRizwanBashir/FluxQuery.Net) a
 ## Example
 
 ```csharp
-string fluxQuery = FluxQueryBuilder.From("bucketName")
+string fluxQuery = FluxQueryBuilder.Create()
+    .From("bucketName")
     .Filter(f => f.Measurement("measurementName")
         .Tag("tagKey1", "tagValue1")
         .Tag("tagKey2", "tagValue2")
