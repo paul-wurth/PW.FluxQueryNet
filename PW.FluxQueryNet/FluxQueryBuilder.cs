@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PW.FluxQueryNet.Extensions;
+using System.Collections.Generic;
 using System.Text;
 
 namespace PW.FluxQueryNet
@@ -14,6 +15,14 @@ namespace PW.FluxQueryNet
         /// Creates a <see cref="FluxQueryBuilder"/> to generate a Flux query.
         /// </summary>
         public static IFluxSource Create() => new FluxQueryBuilder();
+
+        /// <inheritdoc/>
+        public IFluxStream PipeCustomFlux(string rawFlux)
+        {
+            _stringBuilder.AppendLine();
+            _stringBuilder.AppendPipe().Append(rawFlux);
+            return this;
+        }
 
         /// <inheritdoc/>
         public string ToQuery()

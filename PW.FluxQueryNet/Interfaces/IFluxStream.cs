@@ -3,6 +3,12 @@
     public partial interface IFluxStream
     {
         /// <summary>
+        /// Performs an operation specified in <paramref name="rawFlux"/> on the piped data stream.
+        /// </summary>
+        /// <param name="rawFlux">Raw Flux that operates on and returns a data stream.</param>
+        IFluxStream PipeCustomFlux(string rawFlux);
+
+        /// <summary>
         /// <para>Delivers input data as a result of the query.</para>
         /// <para>A query may have multiple yields, each identified by unique name specified in the name parameter.</para>
         /// </summary>

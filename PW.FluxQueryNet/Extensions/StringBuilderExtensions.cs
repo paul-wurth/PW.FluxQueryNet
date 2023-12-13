@@ -4,6 +4,8 @@ namespace PW.FluxQueryNet.Extensions
 {
     internal static class StringBuilderExtensions
     {
+        public static StringBuilder AppendPipe(this StringBuilder stringBuilder) => stringBuilder.Append("|> ");
+
         public static StringBuilder AppendStringArrayParameter(this StringBuilder stringBuilder,
             string parameterName, string[] values, bool prefixComma = false)
         {

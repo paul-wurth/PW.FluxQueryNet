@@ -9,7 +9,7 @@ namespace PW.FluxQueryNet
         public IFluxStream Range(FluxTime start, FluxTime? end = null)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> range(start: ").Append(start);
+            _stringBuilder.AppendPipe().Append("range(start: ").Append(start);
             _packages.AddIfNotNull(start.GetPackage());
 
             if (end != null)
@@ -26,7 +26,7 @@ namespace PW.FluxQueryNet
         public IFluxStream Filter(Action<FluxFilter> filterAction)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> filter(fn: (r) => ");
+            _stringBuilder.AppendPipe().Append("filter(fn: (r) => ");
 
             var filter = new FluxFilter(_stringBuilder);
             filterAction.Invoke(filter);

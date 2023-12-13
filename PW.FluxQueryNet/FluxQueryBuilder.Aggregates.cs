@@ -8,7 +8,7 @@ namespace PW.FluxQueryNet
         public IFluxStream Aggregate(string methodName, string? column = null)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> ").Append(methodName).Append('(');
+            _stringBuilder.AppendPipe().Append(methodName).Append('(');
 
             if (!string.IsNullOrWhiteSpace(column))
                 _stringBuilder.Append("column: \"").Append(column).Append('"');
@@ -30,7 +30,7 @@ namespace PW.FluxQueryNet
         public IFluxStream MovingAverage(int n)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> movingAverage(n: ").Append(n.ToFlux()).Append(')');
+            _stringBuilder.AppendPipe().Append("movingAverage(n: ").Append(n.ToFlux()).Append(')');
             return this;
         }
 
@@ -38,7 +38,7 @@ namespace PW.FluxQueryNet
         public IFluxStream TimedMovingAverage(FluxDuration every, FluxDuration period, string? column = null)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> timedMovingAverage(every: ").Append(every).Append(", period: ").Append(period);
+            _stringBuilder.AppendPipe().Append("timedMovingAverage(every: ").Append(every).Append(", period: ").Append(period);
 
             if (!string.IsNullOrWhiteSpace(column))
                 _stringBuilder.Append(", column: \"").Append(column).Append('"');
@@ -59,7 +59,7 @@ namespace PW.FluxQueryNet
             string? location = null, string? timeColumn = null, string? startColumn = null, string? stopColumn = null, bool createEmpty = false)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> window(every: ").Append(every);
+            _stringBuilder.AppendPipe().Append("window(every: ").Append(every);
 
             if (period != null)
                 _stringBuilder.Append(", period: ").Append(period);
@@ -88,7 +88,7 @@ namespace PW.FluxQueryNet
             string? location = null, string? column = null, string? timeSrcColumn = null, string? timeDstColumn = null, bool createEmpty = true)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.Append("|> aggregateWindow(fn: ").Append(aggregateFunction).Append(", every: ").Append(every);
+            _stringBuilder.AppendPipe().Append("aggregateWindow(fn: ").Append(aggregateFunction).Append(", every: ").Append(every);
 
             if (period != null)
                 _stringBuilder.Append(", period: ").Append(period);
