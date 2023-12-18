@@ -1,4 +1,6 @@
 ﻿using PW.FluxQueryNet.Extensions;
+using PW.FluxQueryNet.Parameterization;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,6 +10,7 @@ namespace PW.FluxQueryNet
     {
         private readonly HashSet<string> _packages = new();
         private readonly StringBuilder _stringBuilder = new();
+        private readonly ParametersManager _parameters = new();
 
         private FluxQueryBuilder() { }
 
@@ -17,10 +20,18 @@ namespace PW.FluxQueryNet
         public static IFluxSource Create() => new FluxQueryBuilder();
 
         /// <inheritdoc/>
-        public IFluxStream PipeCustomFlux(string rawFlux)
+        public IFluxStream PipeCustomFlux(FormattableString rawFlux)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append(rawFlux);
+            _stringBuilder.AppendPipe().Append(_parameters.Parameterize(rawFlux, "pipeCustomFlux"));
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IFluxStream PipeCustomFluxUnsafe(Func<ParametersManager, string> rawFluxBuilder)
+        {
+            _stringBuilder.AppendLine();
+            _stringBuilder.AppendPipe().Append(rawFluxBuilder(_parameters));
             return this;
         }
 

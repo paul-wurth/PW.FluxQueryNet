@@ -1,4 +1,6 @@
 ﻿using PW.FluxQueryNet.Extensions;
+using PW.FluxQueryNet.Parameterization;
+using System;
 
 namespace PW.FluxQueryNet
 {
@@ -12,9 +14,16 @@ namespace PW.FluxQueryNet
         }
 
         /// <inheritdoc/>
-        public IFluxStream FromCustomFlux(string rawFlux)
+        public IFluxStream FromCustomFlux(FormattableString rawFlux)
         {
-            _stringBuilder.Append(rawFlux);
+            _stringBuilder.Append(_parameters.Parameterize(rawFlux, "fromCustomFlux"));
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IFluxStream FromCustomFluxUnsafe(Func<ParametersManager, string> rawFluxBuilder)
+        {
+            _stringBuilder.Append(rawFluxBuilder(_parameters));
             return this;
         }
 

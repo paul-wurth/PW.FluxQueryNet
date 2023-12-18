@@ -1,12 +1,34 @@
-﻿namespace PW.FluxQueryNet
+﻿using PW.FluxQueryNet.Parameterization;
+using System;
+
+namespace PW.FluxQueryNet
 {
     public partial interface IFluxStream
     {
         /// <summary>
-        /// Performs an operation specified in <paramref name="rawFlux"/> on the piped data stream.
+        /// Performs an operation specified in the <paramref name="rawFlux"/> interpolated string, on the piped data stream.
         /// </summary>
-        /// <param name="rawFlux">Raw Flux that operates on and returns a data stream.</param>
-        IFluxStream PipeCustomFlux(string rawFlux);
+        /// <remarks>
+        /// This method provides a built-in mechanism to protect against Flux injection attacks.
+        /// Interpolated values in the <paramref name="rawFlux"/> query string will be parameterized automatically.
+        /// </remarks>
+        /// <param name="rawFlux">An interpolated string representing raw Flux (to operate on and return a data stream).</param>
+        IFluxStream PipeCustomFlux(FormattableString rawFlux);
+
+        /// <summary>
+        /// Performs an operation returned by the <paramref name="rawFluxBuilder"/> function, on the piped data stream
+        /// (without built-in protection against Flux injection attacks).
+        /// </summary>
+        /// <remarks>
+        /// To prevent Flux injection attacks, <b>never pass a concatenated or interpolated string</b> (<c>$""</c>) with
+        /// non-validated user-provided values into this method.<br/>Instead, use the <see cref="ParametersManager"/>
+        /// argument provided by <paramref name="rawFluxBuilder"/> to parameterize the values, as below:
+        /// <code>
+        /// PipeCustomFluxUnsafe(p => "stddev(mode: " + p.Parameterize("stddevMode", mode) + ")")
+        /// </code>
+        /// </remarks>
+        /// <param name="rawFluxBuilder">A function that builds a string representing raw Flux (to operate on and return a data stream).</param>
+        IFluxStream PipeCustomFluxUnsafe(Func<ParametersManager, string> rawFluxBuilder);
 
         /// <summary>
         /// <para>Delivers input data as a result of the query.</para>
