@@ -5,14 +5,9 @@ namespace PW.FluxQueryNet
     public partial class FluxQueryBuilder
     {
         /// <inheritdoc/>
-        public IFluxStream From(string bucket, string? retentionPolicy = null)
+        public IFluxStream From(string bucket)
         {
-            _stringBuilder.Append("from(bucket: \"").Append(bucket);
-
-            if (!string.IsNullOrWhiteSpace(retentionPolicy))
-                _stringBuilder.Append('/').Append(retentionPolicy);
-
-            _stringBuilder.Append("\")");
+            _stringBuilder.Append("from(bucket: \"").Append(bucket).Append("\")");
             return this;
         }
 
