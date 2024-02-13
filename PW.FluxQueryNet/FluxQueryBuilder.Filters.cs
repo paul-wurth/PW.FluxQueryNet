@@ -1,4 +1,5 @@
 ﻿using PW.FluxQueryNet.Extensions;
+using PW.FluxQueryNet.FluxTypes;
 using System;
 
 namespace PW.FluxQueryNet

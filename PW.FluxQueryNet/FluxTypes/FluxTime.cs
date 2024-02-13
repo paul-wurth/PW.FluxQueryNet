@@ -1,8 +1,8 @@
 ﻿using NodaTime;
-using PW.FluxQueryNet.Extensions;
+using PW.FluxQueryNet.FluxTypes.Converters;
 using System;
 
-namespace PW.FluxQueryNet
+namespace PW.FluxQueryNet.FluxTypes
 {
     /// <summary>
     /// Represents a single point in time in Flux with nanosecond precision.
@@ -29,16 +29,16 @@ namespace PW.FluxQueryNet
 
 
 #if NET6_0_OR_GREATER
-        public static implicit operator FluxTime(DateOnly value) => new(value.ToFlux());
+        public static implicit operator FluxTime(DateOnly value) => new(value.ToFluxNotation());
 #endif
-        public static implicit operator FluxTime(DateTime value) => new(value.ToFlux());
-        public static implicit operator FluxTime(DateTimeOffset value) => new(value.ToFlux());
-        public static implicit operator FluxTime(Instant value) => new(value.ToFlux());
-        public static implicit operator FluxTime(OffsetDateTime value) => new(value.ToFlux());
-        public static implicit operator FluxTime(ZonedDateTime value) => new(value.ToFlux());
-        public static implicit operator FluxTime(LocalDateTime value) => new(value.ToFlux());
-        public static implicit operator FluxTime(TimeSpan value) => new(value.ToFlux());
-        public static implicit operator FluxTime(Duration value) => new(value.ToFlux());
+        public static implicit operator FluxTime(DateTime value) => new(value.ToFluxNotation());
+        public static implicit operator FluxTime(DateTimeOffset value) => new(value.ToFluxNotation());
+        public static implicit operator FluxTime(Instant value) => new(value.ToFluxNotation());
+        public static implicit operator FluxTime(OffsetDateTime value) => new(value.ToFluxNotation());
+        public static implicit operator FluxTime(ZonedDateTime value) => new(value.ToFluxNotation());
+        public static implicit operator FluxTime(LocalDateTime value) => new(value.ToFluxNotation());
+        public static implicit operator FluxTime(TimeSpan value) => new(value.ToFluxNotation());
+        public static implicit operator FluxTime(Duration value) => new(value.ToFluxNotation());
 
         /// <summary>
         /// Returns the current system time at which the Flux script is executed.

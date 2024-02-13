@@ -1,4 +1,5 @@
 ﻿using PW.FluxQueryNet.Extensions;
+using PW.FluxQueryNet.FluxTypes.Converters;
 
 namespace PW.FluxQueryNet
 {
@@ -26,7 +27,7 @@ namespace PW.FluxQueryNet
         public IFluxStream Top(int n, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("top(n: ").Append(n.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(')');
+            _stringBuilder.AppendPipe().Append("top(n: ").Append(n.ToFluxNotation()).AppendStringArrayParameter("columns", columns, true).Append(')');
             return this;
         }
 
@@ -34,7 +35,7 @@ namespace PW.FluxQueryNet
         public IFluxStream Bottom(int n, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("bottom(n: ").Append(n.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(')');
+            _stringBuilder.AppendPipe().Append("bottom(n: ").Append(n.ToFluxNotation()).AppendStringArrayParameter("columns", columns, true).Append(')');
             return this;
         }
 
@@ -42,7 +43,7 @@ namespace PW.FluxQueryNet
         public IFluxStream Sort(bool desc, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("sort(desc: ").Append(desc.ToFlux()).AppendStringArrayParameter("columns", columns, true).Append(')');
+            _stringBuilder.AppendPipe().Append("sort(desc: ").Append(desc.ToFluxNotation()).AppendStringArrayParameter("columns", columns, true).Append(')');
             return this;
         }
 
@@ -50,10 +51,10 @@ namespace PW.FluxQueryNet
         public IFluxStream Limit(int n, int? offset = null)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("limit(n: ").Append(n.ToFlux());
+            _stringBuilder.AppendPipe().Append("limit(n: ").Append(n.ToFluxNotation());
 
             if (offset.HasValue)
-                _stringBuilder.Append(", offset: ").Append(offset.Value.ToFlux());
+                _stringBuilder.Append(", offset: ").Append(offset.Value.ToFluxNotation());
 
             _stringBuilder.Append(')');
             return this;
@@ -64,7 +65,7 @@ namespace PW.FluxQueryNet
         public IFluxStream Fill(object value, string? column = null)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("fill(value: ").Append(value.ToFlux());
+            _stringBuilder.AppendPipe().Append("fill(value: ").Append(value.ToFluxNotation());
 
             if (!string.IsNullOrWhiteSpace(column))
                 _stringBuilder.Append(", column: \"").Append(column).Append('"');

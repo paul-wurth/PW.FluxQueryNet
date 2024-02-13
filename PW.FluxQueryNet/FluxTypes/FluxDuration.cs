@@ -1,8 +1,8 @@
 ﻿using NodaTime;
-using PW.FluxQueryNet.Extensions;
+using PW.FluxQueryNet.FluxTypes.Converters;
 using System;
 
-namespace PW.FluxQueryNet
+namespace PW.FluxQueryNet.FluxTypes
 {
     /// <summary>
     /// Represents a length of time in Flux with nanosecond precision.
@@ -20,7 +20,7 @@ namespace PW.FluxQueryNet
         public override string ToString() => _value;
 
 
-        public static implicit operator FluxDuration(TimeSpan value) => new(value.ToFlux());
-        public static implicit operator FluxDuration(Duration value) => new(value.ToFlux());
+        public static implicit operator FluxDuration(TimeSpan value) => new(value.ToFluxNotation());
+        public static implicit operator FluxDuration(Duration value) => new(value.ToFluxNotation());
     }
 }

@@ -1,4 +1,6 @@
 ﻿using PW.FluxQueryNet.Extensions;
+using PW.FluxQueryNet.FluxTypes;
+using PW.FluxQueryNet.FluxTypes.Converters;
 
 namespace PW.FluxQueryNet
 {
@@ -30,7 +32,7 @@ namespace PW.FluxQueryNet
         public IFluxStream MovingAverage(int n)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("movingAverage(n: ").Append(n.ToFlux()).Append(')');
+            _stringBuilder.AppendPipe().Append("movingAverage(n: ").Append(n.ToFluxNotation()).Append(')');
             return this;
         }
 
@@ -79,7 +81,7 @@ namespace PW.FluxQueryNet
             if (!string.IsNullOrWhiteSpace(stopColumn))
                 _stringBuilder.Append(", stopColumn: \"").Append(stopColumn).Append('"');
 
-            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFlux()).Append(')');
+            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFluxNotation()).Append(')');
             return this;
         }
 
@@ -108,7 +110,7 @@ namespace PW.FluxQueryNet
             if (!string.IsNullOrWhiteSpace(timeDstColumn))
                 _stringBuilder.Append(", timeDst: \"").Append(timeDstColumn).Append('"');
 
-            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFlux()).Append(')');
+            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFluxNotation()).Append(')');
             return this;
         }
     }

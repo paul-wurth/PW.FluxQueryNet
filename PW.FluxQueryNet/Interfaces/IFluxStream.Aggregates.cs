@@ -1,4 +1,6 @@
-﻿namespace PW.FluxQueryNet
+﻿using PW.FluxQueryNet.FluxTypes;
+
+namespace PW.FluxQueryNet
 {
     public partial interface IFluxStream
     {
