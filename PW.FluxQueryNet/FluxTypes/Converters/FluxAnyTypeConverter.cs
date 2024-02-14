@@ -49,6 +49,7 @@ namespace PW.FluxQueryNet.FluxTypes.Converters
             // Durations
             TimeSpan d => d.ToFluxNotation(),
             Duration d => d.ToFluxNotation(),
+            Period d => d.ToFluxNotation(),
 
             // String
             string s => s.ToFluxNotation(),
