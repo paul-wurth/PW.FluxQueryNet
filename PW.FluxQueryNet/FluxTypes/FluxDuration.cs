@@ -12,7 +12,7 @@ namespace PW.FluxQueryNet.FluxTypes
     /// This can only be obtained by the implicit conversion of a <see cref="TimeSpan"/>, <see cref="Duration"/> or <see cref="Period"/>.
     /// </remarks>
     /// <seealso href="https://docs.influxdata.com/flux/latest/data-types/basic/duration/">Duration - InfluxDB documentation</seealso>
-    public sealed class FluxDuration
+    public sealed class FluxDuration : FluxTimeable
     {
         private const long MonthsPerYear = 12;
         private const long MicrosecondsPerMillisecond = 1000;
@@ -85,7 +85,7 @@ namespace PW.FluxQueryNet.FluxTypes
 
         public override string ToString() => ToFluxNotation();
 
-        public string ToFluxNotation()
+        public override string ToFluxNotation()
         {
             var (isNegative, years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds) = GetNormalizedValues();
 

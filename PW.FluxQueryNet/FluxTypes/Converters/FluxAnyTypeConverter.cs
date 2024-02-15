@@ -15,6 +15,8 @@ namespace PW.FluxQueryNet.FluxTypes.Converters
         {
             null => throw new ArgumentNullException(nameof(value), NullValueMessage),
 
+            IFluxType x => x.ToFluxNotation(),
+
             // Boolean
             bool b => b.ToFluxNotation(),
 
@@ -44,7 +46,9 @@ namespace PW.FluxQueryNet.FluxTypes.Converters
             Instant d => d.ToFluxNotation(),
             ZonedDateTime d => d.ToFluxNotation(),
             OffsetDateTime d => d.ToFluxNotation(),
+            OffsetDate d => d.ToFluxNotation(),
             LocalDateTime d => d.ToFluxNotation(),
+            LocalDate d => d.ToFluxNotation(),
 
             // Durations
             TimeSpan d => d.ToFluxNotation(),

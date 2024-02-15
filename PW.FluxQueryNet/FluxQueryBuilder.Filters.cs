@@ -7,7 +7,7 @@ namespace PW.FluxQueryNet
     public partial class FluxQueryBuilder
     {
         /// <inheritdoc/>
-        public IFluxStream Range(FluxTime start, FluxTime? end = null)
+        public IFluxStream Range(FluxTimeable start, FluxTimeable? end = null)
         {
             _stringBuilder.AppendLine();
             _stringBuilder.AppendPipe().Append("range(start: ").Append(start);
