@@ -13,7 +13,7 @@ namespace PW.FluxQueryNet.FluxTypes.Converters
     {
         public static FluxDuration AsFluxDuration(this TimeSpan value) => value;
         public static FluxDuration AsFluxDuration(this Duration value) => value;
-        public static FluxDuration AsFluxDuration(this Period value) => value;
+        public static FluxDuration AsFluxDuration(this Period value) => value ?? throw new ArgumentNullException(nameof(value), FluxAnyTypeConverter.NullValueMessage);
 
         public static string ToFluxNotation(this TimeSpan value) => value.AsFluxDuration().ToFluxNotation();
         public static string ToFluxNotation(this Duration value) => value.AsFluxDuration().ToFluxNotation();
