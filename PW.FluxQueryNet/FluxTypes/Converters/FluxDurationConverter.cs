@@ -1,10 +1,12 @@
-﻿using NodaTime;
+﻿using InfluxDB.Client.Api.Domain;
+using NodaTime;
 using System;
+using Duration = NodaTime.Duration;
 
 namespace PW.FluxQueryNet.FluxTypes.Converters
 {
     /// <summary>
-    /// Extension methods to convert duration to Flux notation.
+    /// Extension methods to convert duration to Flux notation and Flux AST representation.
     /// </summary>
     /// <seealso href="https://docs.influxdata.com/flux/latest/data-types/basic/duration/">Duration - InfluxDB documentation</seealso>
     public static class FluxDurationConverter
@@ -16,5 +18,9 @@ namespace PW.FluxQueryNet.FluxTypes.Converters
         public static string ToFluxNotation(this TimeSpan value) => value.AsFluxDuration().ToFluxNotation();
         public static string ToFluxNotation(this Duration value) => value.AsFluxDuration().ToFluxNotation();
         public static string ToFluxNotation(this Period value) => value.AsFluxDuration().ToFluxNotation();
+
+        public static Expression ToFluxAstNode(this TimeSpan value) => value.AsFluxDuration().ToFluxAstNode();
+        public static Expression ToFluxAstNode(this Duration value) => value.AsFluxDuration().ToFluxAstNode();
+        public static Expression ToFluxAstNode(this Period value) => value.AsFluxDuration().ToFluxAstNode();
     }
 }

@@ -1,6 +1,8 @@
-﻿using NodaTime;
+﻿using InfluxDB.Client.Api.Domain;
+using NodaTime;
 using PW.FluxQueryNet.FluxTypes.Converters;
 using System;
+using Duration = NodaTime.Duration;
 
 namespace PW.FluxQueryNet.FluxTypes
 {
@@ -19,6 +21,8 @@ namespace PW.FluxQueryNet.FluxTypes
     public abstract class FluxTimeable : IFluxType
     {
         public abstract string ToFluxNotation();
+
+        public abstract Expression ToFluxAstNode();
 
         public virtual string? GetPackage() => null;
 

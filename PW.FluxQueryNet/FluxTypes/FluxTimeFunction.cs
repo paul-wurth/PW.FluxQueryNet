@@ -1,4 +1,7 @@
-﻿namespace PW.FluxQueryNet.FluxTypes
+﻿using InfluxDB.Client.Api.Domain;
+using System;
+
+namespace PW.FluxQueryNet.FluxTypes
 {
     /// <summary>
     /// Represents a Flux function that returns a single point in time.
@@ -17,6 +20,8 @@
         public override string ToString() => ToFluxNotation();
 
         public override string ToFluxNotation() => _value;
+
+        public override Expression ToFluxAstNode() => throw new NotSupportedException("Generating a Flux AST for time functions is not yet supported and not urgent since there is no risk of Flux injection (as functions are not user-defined)"); // TODO
 
         public override string? GetPackage() => _package;
 

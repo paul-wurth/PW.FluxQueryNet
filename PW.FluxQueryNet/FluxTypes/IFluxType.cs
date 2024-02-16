@@ -1,8 +1,12 @@
-﻿namespace PW.FluxQueryNet.FluxTypes
+﻿using InfluxDB.Client.Api.Domain;
+
+namespace PW.FluxQueryNet.FluxTypes
 {
     public interface IFluxType
     {
         string ToFluxNotation();
+
+        Expression ToFluxAstNode();
 
         string? GetPackage();
     }

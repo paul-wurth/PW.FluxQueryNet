@@ -1,7 +1,10 @@
-﻿using NodaTime;
+﻿using InfluxDB.Client.Api.Domain;
+using NodaTime;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using static NodaTime.NodaConstants;
+using Duration = NodaTime.Duration;
 
 namespace PW.FluxQueryNet.FluxTypes
 {
@@ -118,6 +121,42 @@ namespace PW.FluxQueryNet.FluxTypes
                 stringBuilder.Append("0ns");
 
             return stringBuilder.ToString();
+        }
+
+        public override Expression ToFluxAstNode()
+        {
+            var (isNegative, years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds) = GetNormalizedValues();
+
+            var values = new List<InfluxDB.Client.Api.Domain.Duration>();
+            Expression expression = new DurationLiteral(nameof(DurationLiteral), values);
+
+            if (isNegative)
+                expression = new UnaryExpression(nameof(UnaryExpression), "-", expression);
+            if (years != 0)
+                values.Add(new(nameof(Duration), years, "y"));
+            if (months != 0)
+                values.Add(new(nameof(Duration), months, "mo"));
+            if (weeks != 0)
+                values.Add(new(nameof(Duration), weeks, "w"));
+            if (days != 0)
+                values.Add(new(nameof(Duration), days, "d"));
+            if (hours != 0)
+                values.Add(new(nameof(Duration), hours, "h"));
+            if (minutes != 0)
+                values.Add(new(nameof(Duration), minutes, "m"));
+            if (seconds != 0)
+                values.Add(new(nameof(Duration), seconds, "s"));
+            if (milliseconds != 0)
+                values.Add(new(nameof(Duration), milliseconds, "ms"));
+            if (microseconds != 0)
+                values.Add(new(nameof(Duration), microseconds, "us"));
+            if (nanoseconds != 0)
+                values.Add(new(nameof(Duration), nanoseconds, "ns"));
+
+            if (values.Count == 0)
+                values.Add(new(nameof(Duration), 0, "ns"));
+
+            return expression;
         }
     }
 }

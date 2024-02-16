@@ -1,6 +1,8 @@
-﻿using NodaTime;
+﻿using InfluxDB.Client.Api.Domain;
+using NodaTime;
 using NodaTime.Text;
 using System;
+using DateTimeLiteral = PW.FluxQueryNet.Parameterization.DateTimeLiteral;
 
 namespace PW.FluxQueryNet.FluxTypes
 {
@@ -33,5 +35,7 @@ namespace PW.FluxQueryNet.FluxTypes
         public override string ToString() => ToFluxNotation();
 
         public override string ToFluxNotation() => InstantPattern.ExtendedIso.Format(_value);
+
+        public override Expression ToFluxAstNode() => new DateTimeLiteral(nameof(DateTimeLiteral), _value);
     }
 }
