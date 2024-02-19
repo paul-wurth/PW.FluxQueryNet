@@ -1,23 +1,29 @@
-﻿using PW.FluxQueryNet.Extensions;
+﻿using InfluxDB.Client;
+using InfluxDB.Client.Api.Domain;
+using PW.FluxQueryNet.Extensions;
+using PW.FluxQueryNet.Options;
 using PW.FluxQueryNet.Parameterization;
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace PW.FluxQueryNet
 {
     public partial class FluxQueryBuilder : IFluxSource, IFluxStream
     {
-        private readonly HashSet<string> _packages = new();
         private readonly StringBuilder _stringBuilder = new();
-        private readonly ParametersManager _parameters = new();
+        private readonly FluxBuilderOptions _options;
+        private readonly ParametersManager _parameters;
 
-        private FluxQueryBuilder() { }
+        private FluxQueryBuilder(FluxBuilderOptions? options)
+        {
+            _options = options ?? new FluxBuilderOptions();
+            _parameters = new ParametersManager(_options);
+        }
 
         /// <summary>
         /// Creates a <see cref="FluxQueryBuilder"/> to generate a Flux query.
         /// </summary>
-        public static IFluxSource Create() => new FluxQueryBuilder();
+        public static IFluxSource Create(FluxBuilderOptions? options = null) => new FluxQueryBuilder(options);
 
         /// <inheritdoc/>
         public IFluxStream PipeCustomFlux(FormattableString rawFlux)
@@ -36,19 +42,28 @@ namespace PW.FluxQueryNet
         }
 
         /// <inheritdoc/>
-        public string ToQuery()
+        public Query ToQuery(Dialect? dialect = null)
         {
-            if (_packages.Count < 1)
-                return _stringBuilder.ToString();
+            var parametersStatement = _parameters.GetParametersAsFluxAst();
 
-            var packagesBuilder = new StringBuilder();
-            foreach (var package in _packages)
-            {
-                packagesBuilder.Append("import \"").Append(package).Append('"').AppendLine();
-            }
-            packagesBuilder.AppendLine();
+            return new Query(
+                query: _options.GetImportsAsFluxNotation() + _stringBuilder.ToString(),
+                _extern: new(nameof(File),
+                    imports: [],
+                    body: parametersStatement == null ? [] : [parametersStatement]
+                ),
+                type: Query.TypeEnum.Flux,
+                dialect: dialect ?? QueryApi.Dialect,
+                now: _options.Now);
+        }
 
-            return packagesBuilder.ToString() + _stringBuilder.ToString();
+        /// <inheritdoc/>
+        public string ToDebugQueryString()
+        {
+            return _options.GetImportsAsFluxNotation()
+                + _options.GetNowAsFluxNotation()
+                + _parameters.GetParametersAsFluxNotation()
+                + _stringBuilder.ToString();
         }
     }
 }
