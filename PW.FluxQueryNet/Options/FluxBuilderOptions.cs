@@ -1,8 +1,10 @@
-﻿using PW.FluxQueryNet.Extensions;
+﻿using InfluxDB.Client.Api.Domain;
+using PW.FluxQueryNet.Extensions;
 using PW.FluxQueryNet.FluxTypes.Converters;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
 
 namespace PW.FluxQueryNet.Options
@@ -13,8 +15,8 @@ namespace PW.FluxQueryNet.Options
 
         public DateTime? Now { get; private set; }
 
-        private readonly HashSet<string> _packages = new();
-        public ImmutableHashSet<string> Packages => _packages.ToImmutableHashSet();
+        private readonly HashSet<FluxPackageImport> _packageImports = new();
+        public ImmutableHashSet<FluxPackageImport> PackageImports => _packageImports.ToImmutableHashSet();
 
 
         public FluxBuilderOptions(ParameterizedTypes parameterizedTypes = ParameterizedTypes.All)
@@ -28,9 +30,9 @@ namespace PW.FluxQueryNet.Options
             return this;
         }
 
-        public FluxBuilderOptions ImportPackage(string? package)
+        public FluxBuilderOptions ImportPackage(FluxPackageImport? packageImport)
         {
-            _packages.AddIfNotNull(package);
+            _packageImports.AddIfNotNull(packageImport);
             return this;
         }
 
@@ -45,17 +47,21 @@ namespace PW.FluxQueryNet.Options
 
         internal string? GetImportsAsFluxNotation()
         {
-            if (_packages.Count < 1)
+            if (_packageImports.Count < 1)
                 return null;
 
             var stringBuilder = new StringBuilder();
-            foreach (var package in _packages)
+            foreach (var import in _packageImports)
             {
-                stringBuilder.Append("import \"").Append(package).Append('"').AppendLine();
+                stringBuilder.AppendLine(import.ToFluxNotation());
             }
             stringBuilder.AppendLine();
 
             return stringBuilder.ToString();
         }
+
+        internal List<ImportDeclaration> GetImportsAsFluxAst() => _packageImports
+            .Select(import => import.ToFluxAstNode())
+            .ToList();
     }
 }

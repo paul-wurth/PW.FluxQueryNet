@@ -47,9 +47,9 @@ namespace PW.FluxQueryNet
             var parametersStatement = _parameters.GetParametersAsFluxAst();
 
             return new Query(
-                query: _options.GetImportsAsFluxNotation() + _stringBuilder.ToString(),
+                query: _stringBuilder.ToString(),
                 _extern: new(nameof(File),
-                    imports: [],
+                    imports: _options.GetImportsAsFluxAst(),
                     body: parametersStatement == null ? [] : [parametersStatement]
                 ),
                 type: Query.TypeEnum.Flux,

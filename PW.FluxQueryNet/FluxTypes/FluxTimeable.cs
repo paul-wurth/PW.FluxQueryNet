@@ -24,7 +24,7 @@ namespace PW.FluxQueryNet.FluxTypes
 
         public abstract Expression ToFluxAstNode();
 
-        public virtual string? GetPackage() => null;
+        public virtual FluxPackageImport? GetPackageImport() => null;
 
 
         public static implicit operator FluxTimeable(DateTime value) => value.AsFluxTime();

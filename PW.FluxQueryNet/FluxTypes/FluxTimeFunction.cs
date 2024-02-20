@@ -9,12 +9,12 @@ namespace PW.FluxQueryNet.FluxTypes
     public sealed class FluxTimeFunction : FluxTimeable
     {
         private readonly string _value;
-        private readonly string? _package;
+        private readonly FluxPackageImport? _import;
 
-        private FluxTimeFunction(string value, string? package = null)
+        private FluxTimeFunction(string value, FluxPackageImport? import = null)
         {
             _value = value;
-            _package = package;
+            _import = import;
         }
 
         public override string ToString() => ToFluxNotation();
@@ -23,7 +23,7 @@ namespace PW.FluxQueryNet.FluxTypes
 
         public override Expression ToFluxAstNode() => throw new NotSupportedException("Generating a Flux AST for time functions is not yet supported and not urgent since there is no risk of Flux injection (as functions are not user-defined)"); // TODO
 
-        public override string? GetPackage() => _package;
+        public override FluxPackageImport? GetPackageImport() => _import;
 
 
         /// <summary>

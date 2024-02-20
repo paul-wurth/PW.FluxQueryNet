@@ -7,7 +7,5 @@ namespace PW.FluxQueryNet.FluxTypes
         string ToFluxNotation();
 
         Expression ToFluxAstNode();
-
-        string? GetPackage();
     }
 }
