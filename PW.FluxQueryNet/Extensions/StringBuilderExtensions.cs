@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace PW.FluxQueryNet.Extensions
 {
@@ -6,24 +8,32 @@ namespace PW.FluxQueryNet.Extensions
     {
         public static StringBuilder AppendPipe(this StringBuilder stringBuilder) => stringBuilder.Append("|> ");
 
-        public static StringBuilder AppendStringArrayParameter(this StringBuilder stringBuilder,
-            string parameterName, string[] values, bool prefixComma = false) // TODO: parameterize string arrays
+#if !NETSTANDARD2_1_OR_GREATER && !NETCOREAPP2_0_OR_GREATER
+        public static StringBuilder AppendJoin<T>(this StringBuilder stringBuilder, string separator, IEnumerable<T> values)
         {
-            if (values == null || values.Length == 0)
+            if (values == null)
+                throw new ArgumentNullException(nameof(values));
+
+            using IEnumerator<T> enumerator = values.GetEnumerator();
+
+            if (!enumerator.MoveNext())
                 return stringBuilder;
 
-            if (prefixComma)
-                stringBuilder.Append(", ");
+            T value = enumerator.Current;
+            if (value != null)
+                stringBuilder.Append(value.ToString());
 
-            stringBuilder.Append(parameterName).Append(": [");
-            for (int i = 0; i < values.Length; i++)
+            while (enumerator.MoveNext())
             {
-                if (i > 0)
-                    stringBuilder.Append(", ");
+                stringBuilder.Append(separator);
 
-                stringBuilder.Append('"').Append(values[i]).Append('"');
+                value = enumerator.Current;
+                if (value != null)
+                    stringBuilder.Append(value.ToString());
             }
-            return stringBuilder.Append(']');
+
+            return stringBuilder;
         }
+#endif
     }
 }

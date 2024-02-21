@@ -1,6 +1,7 @@
 ﻿using InfluxDB.Client.Api.Domain;
 using NodaTime;
 using System;
+using System.Collections;
 using System.Globalization;
 using Duration = NodaTime.Duration;
 
@@ -60,6 +61,9 @@ namespace PW.FluxQueryNet.FluxTypes.Converters
             // String
             string s => s.ToFluxNotation(),
 
+            // Array
+            IEnumerable e => e.ToFluxNotation(),
+
             _ => Convert.ToString(value, CultureInfo.InvariantCulture)!.ToFluxNotation()
         };
 
@@ -109,6 +113,9 @@ namespace PW.FluxQueryNet.FluxTypes.Converters
 
             // String
             string s => s.ToFluxAstNode(),
+
+            // Array
+            IEnumerable e => e.ToFluxAstNode(),
 
             _ => Convert.ToString(value, CultureInfo.InvariantCulture)!.ToFluxAstNode()
         };

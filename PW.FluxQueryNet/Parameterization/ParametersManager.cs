@@ -4,6 +4,7 @@ using PW.FluxQueryNet.FluxTypes;
 using PW.FluxQueryNet.FluxTypes.Converters;
 using PW.FluxQueryNet.Options;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,9 +45,10 @@ namespace PW.FluxQueryNet.Parameterization
             DateOnly or
 #endif
             FluxTime or DateTime or DateTimeOffset or Instant or ZonedDateTime or
-                 OffsetDateTime or OffsetDate or LocalDateTime or LocalDate => p.IsSet(ParameterizedTypes.DateTime),
+                OffsetDateTime or OffsetDate or LocalDateTime or LocalDate => p.IsSet(ParameterizedTypes.Time),
             FluxDuration or TimeSpan or Duration or Period => p.IsSet(ParameterizedTypes.Duration),
             string => p.IsSet(ParameterizedTypes.String),
+            IEnumerable => p.IsSet(ParameterizedTypes.Array),
             _ => true
         };
 

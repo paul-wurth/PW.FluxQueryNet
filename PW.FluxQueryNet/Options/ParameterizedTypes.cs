@@ -11,11 +11,12 @@ namespace PW.FluxQueryNet.Options
         Integer  = 0b00000100,  // 4
         UInteger = 0b00001000,  // 8
         Float    = 0b00010000,  // 16
-        DateTime = 0b00100000,  // 32
+        Time     = 0b00100000,  // 32
         Duration = 0b01000000,  // 64
+        Array    = 0b10000000,  // 128
 
         Numeric = Integer | UInteger | Float,
-        All = String | Boolean | Numeric | DateTime | Duration
+        All = String | Boolean | Numeric | Time | Duration | Array
     }
 
     public static class ParameterizedTypesExtensions

@@ -26,8 +26,12 @@ namespace PW.FluxQueryNet
         public IFluxStream Top(int n, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("top(n: ").Append(_parameters.Parameterize("top_n", n))
-                .AppendStringArrayParameter("columns", columns, true).Append(')');
+            _stringBuilder.AppendPipe().Append("top(n: ").Append(_parameters.Parameterize("top_n", n));
+
+            if (columns != null && columns.Length > 0)
+                _stringBuilder.Append(", columns: ").Append(_parameters.Parameterize("top_columns", columns));
+
+            _stringBuilder.Append(')');
             return this;
         }
 
@@ -35,8 +39,12 @@ namespace PW.FluxQueryNet
         public IFluxStream Bottom(int n, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("bottom(n: ").Append(_parameters.Parameterize("bottom_n", n))
-                .AppendStringArrayParameter("columns", columns, true).Append(')');
+            _stringBuilder.AppendPipe().Append("bottom(n: ").Append(_parameters.Parameterize("bottom_n", n));
+
+            if (columns != null && columns.Length > 0)
+                _stringBuilder.Append(", columns: ").Append(_parameters.Parameterize("bottom_columns", columns));
+
+            _stringBuilder.Append(')');
             return this;
         }
 
@@ -44,8 +52,12 @@ namespace PW.FluxQueryNet
         public IFluxStream Sort(bool desc, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("sort(desc: ").Append(_parameters.Parameterize("sort_desc", desc))
-                .AppendStringArrayParameter("columns", columns, true).Append(')');
+            _stringBuilder.AppendPipe().Append("sort(desc: ").Append(_parameters.Parameterize("sort_desc", desc));
+
+            if (columns != null && columns.Length > 0)
+                _stringBuilder.Append(", columns: ").Append(_parameters.Parameterize("sort_columns", columns));
+
+            _stringBuilder.Append(')');
             return this;
         }
 
@@ -93,7 +105,12 @@ namespace PW.FluxQueryNet
         public IFluxStream Group(params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("group(").AppendStringArrayParameter("columns", columns).Append(')');
+            _stringBuilder.AppendPipe().Append("group(");
+
+            if (columns != null && columns.Length > 0)
+                _stringBuilder.Append("columns: ").Append(_parameters.Parameterize("group_columns", columns));
+
+            _stringBuilder.Append(')');
             return this;
         }
 
@@ -101,7 +118,12 @@ namespace PW.FluxQueryNet
         public IFluxStream GroupExcept(params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("group(mode: \"except\"").AppendStringArrayParameter("columns", columns, true).Append(')');
+            _stringBuilder.AppendPipe().Append("group(mode: \"except\"");
+
+            if (columns != null && columns.Length > 0)
+                _stringBuilder.Append(", columns: ").Append(_parameters.Parameterize("group_columns", columns));
+
+            _stringBuilder.Append(')');
             return this;
         }
 
@@ -109,7 +131,7 @@ namespace PW.FluxQueryNet
         public IFluxStream Keep(params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("keep(").AppendStringArrayParameter("columns", columns).Append(')');
+            _stringBuilder.AppendPipe().Append("keep(columns: ").Append(_parameters.Parameterize("keep_columns", columns)).Append(')');
             return this;
         }
 
@@ -117,7 +139,7 @@ namespace PW.FluxQueryNet
         public IFluxStream Drop(params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("drop(").AppendStringArrayParameter("columns", columns).Append(')');
+            _stringBuilder.AppendPipe().Append("drop(columns: ").Append(_parameters.Parameterize("drop_columns", columns)).Append(')');
             return this;
         }
 
@@ -126,8 +148,8 @@ namespace PW.FluxQueryNet
         {
             _stringBuilder.AppendLine();
             _stringBuilder.AppendPipe().Append("pivot(valueColumn: ").Append(_parameters.Parameterize("pivot_valueColumn", valueColumn))
-                .AppendStringArrayParameter("rowKey", rowKey, true)
-                .AppendStringArrayParameter("columnKey", columnKey, true)
+                .Append(", rowKey: ").Append(_parameters.Parameterize("pivot_rowKey", rowKey))
+                .Append(", columnKey: ").Append(_parameters.Parameterize("pivot_columnKey", columnKey))
                 .Append(')');
             return this;
         }
