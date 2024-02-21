@@ -1,5 +1,4 @@
 ﻿using PW.FluxQueryNet.Extensions;
-using PW.FluxQueryNet.FluxTypes.Converters;
 
 namespace PW.FluxQueryNet
 {
@@ -27,7 +26,8 @@ namespace PW.FluxQueryNet
         public IFluxStream Top(int n, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("top(n: ").Append(n.ToFluxNotation()).AppendStringArrayParameter("columns", columns, true).Append(')');
+            _stringBuilder.AppendPipe().Append("top(n: ").Append(_parameters.Parameterize("top_n", n))
+                .AppendStringArrayParameter("columns", columns, true).Append(')');
             return this;
         }
 
@@ -35,7 +35,8 @@ namespace PW.FluxQueryNet
         public IFluxStream Bottom(int n, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("bottom(n: ").Append(n.ToFluxNotation()).AppendStringArrayParameter("columns", columns, true).Append(')');
+            _stringBuilder.AppendPipe().Append("bottom(n: ").Append(_parameters.Parameterize("bottom_n", n))
+                .AppendStringArrayParameter("columns", columns, true).Append(')');
             return this;
         }
 
@@ -43,7 +44,8 @@ namespace PW.FluxQueryNet
         public IFluxStream Sort(bool desc, params string[] columns)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("sort(desc: ").Append(desc.ToFluxNotation()).AppendStringArrayParameter("columns", columns, true).Append(')');
+            _stringBuilder.AppendPipe().Append("sort(desc: ").Append(_parameters.Parameterize("sort_desc", desc))
+                .AppendStringArrayParameter("columns", columns, true).Append(')');
             return this;
         }
 
@@ -51,10 +53,10 @@ namespace PW.FluxQueryNet
         public IFluxStream Limit(int n, int? offset = null)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("limit(n: ").Append(n.ToFluxNotation());
+            _stringBuilder.AppendPipe().Append("limit(n: ").Append(_parameters.Parameterize("limit_n", n));
 
             if (offset.HasValue)
-                _stringBuilder.Append(", offset: ").Append(offset.Value.ToFluxNotation());
+                _stringBuilder.Append(", offset: ").Append(_parameters.Parameterize("limit_offset", offset.Value));
 
             _stringBuilder.Append(')');
             return this;
@@ -65,10 +67,10 @@ namespace PW.FluxQueryNet
         public IFluxStream Fill(object value, string? column = null)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("fill(value: ").Append(value.ToFluxNotation());
+            _stringBuilder.AppendPipe().Append("fill(value: ").Append(_parameters.Parameterize("fill_value", value));
 
             if (!string.IsNullOrWhiteSpace(column))
-                _stringBuilder.Append(", column: \"").Append(column).Append('"');
+                _stringBuilder.Append(", column: ").Append(_parameters.Parameterize("fill_column", column));
 
             _stringBuilder.Append(')');
             return this;
@@ -81,7 +83,7 @@ namespace PW.FluxQueryNet
             _stringBuilder.AppendPipe().Append("fill(usePrevious: true");
 
             if (!string.IsNullOrWhiteSpace(column))
-                _stringBuilder.Append(", column: \"").Append(column).Append('"');
+                _stringBuilder.Append(", column: ").Append(_parameters.Parameterize("fill_column", column));
 
             _stringBuilder.Append(')');
             return this;
@@ -123,7 +125,7 @@ namespace PW.FluxQueryNet
         public IFluxStream Pivot(string[] rowKey, string[] columnKey, string valueColumn = "_value")
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("pivot(valueColumn: \"").Append(valueColumn).Append('"')
+            _stringBuilder.AppendPipe().Append("pivot(valueColumn: ").Append(_parameters.Parameterize("pivot_valueColumn", valueColumn))
                 .AppendStringArrayParameter("rowKey", rowKey, true)
                 .AppendStringArrayParameter("columnKey", columnKey, true)
                 .Append(')');

@@ -1,6 +1,5 @@
 ﻿using PW.FluxQueryNet.Extensions;
 using PW.FluxQueryNet.FluxTypes;
-using PW.FluxQueryNet.FluxTypes.Converters;
 
 namespace PW.FluxQueryNet
 {
@@ -9,11 +8,12 @@ namespace PW.FluxQueryNet
         /// <inheritdoc/>
         public IFluxStream Aggregate(string methodName, string? column = null)
         {
+            // TODO: check that "methodName" only contains letters, digits and "_"
             _stringBuilder.AppendLine();
             _stringBuilder.AppendPipe().Append(methodName).Append('(');
 
             if (!string.IsNullOrWhiteSpace(column))
-                _stringBuilder.Append("column: \"").Append(column).Append('"');
+                _stringBuilder.Append("column: ").Append(_parameters.Parameterize(methodName + "_column", column));
 
             _stringBuilder.Append(')');
             return this;
@@ -32,7 +32,7 @@ namespace PW.FluxQueryNet
         public IFluxStream MovingAverage(int n)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("movingAverage(n: ").Append(n.ToFluxNotation()).Append(')');
+            _stringBuilder.AppendPipe().Append("movingAverage(n: ").Append(_parameters.Parameterize("movingAverage_n", n)).Append(')');
             return this;
         }
 
@@ -40,10 +40,11 @@ namespace PW.FluxQueryNet
         public IFluxStream TimedMovingAverage(FluxDuration every, FluxDuration period, string? column = null)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("timedMovingAverage(every: ").Append(every).Append(", period: ").Append(period);
+            _stringBuilder.AppendPipe().Append("timedMovingAverage(every: ").Append(_parameters.Parameterize("timedMovingAverage_every", every))
+                .Append(", period: ").Append(_parameters.Parameterize("timedMovingAverage_period", period));
 
             if (!string.IsNullOrWhiteSpace(column))
-                _stringBuilder.Append(", column: \"").Append(column).Append('"');
+                _stringBuilder.Append(", column: ").Append(_parameters.Parameterize("timedMovingAverage_column", column));
 
             _stringBuilder.Append(')');
             return this;
@@ -61,27 +62,27 @@ namespace PW.FluxQueryNet
             string? location = null, string? timeColumn = null, string? startColumn = null, string? stopColumn = null, bool createEmpty = false)
         {
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("window(every: ").Append(every);
+            _stringBuilder.AppendPipe().Append("window(every: ").Append(_parameters.Parameterize("window_every", every));
 
             if (period != null)
-                _stringBuilder.Append(", period: ").Append(period);
+                _stringBuilder.Append(", period: ").Append(_parameters.Parameterize("window_period", period));
 
             if (offset != null)
-                _stringBuilder.Append(", offset: ").Append(offset);
+                _stringBuilder.Append(", offset: ").Append(_parameters.Parameterize("window_offset", offset));
 
             if (!string.IsNullOrWhiteSpace(location))
-                _stringBuilder.Append(", location: ").Append(location);
+                _stringBuilder.Append(", location: ").Append(location); // TODO: create and use a dedicated type
 
             if (!string.IsNullOrWhiteSpace(timeColumn))
-                _stringBuilder.Append(", timeColumn: \"").Append(timeColumn).Append('"');
+                _stringBuilder.Append(", timeColumn: ").Append(_parameters.Parameterize("window_timeColumn", timeColumn));
 
             if (!string.IsNullOrWhiteSpace(startColumn))
-                _stringBuilder.Append(", startColumn: \"").Append(startColumn).Append('"');
+                _stringBuilder.Append(", startColumn: ").Append(_parameters.Parameterize("window_startColumn", startColumn));
 
             if (!string.IsNullOrWhiteSpace(stopColumn))
-                _stringBuilder.Append(", stopColumn: \"").Append(stopColumn).Append('"');
+                _stringBuilder.Append(", stopColumn: ").Append(_parameters.Parameterize("window_stopColumn", stopColumn));
 
-            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFluxNotation()).Append(')');
+            _stringBuilder.Append(", createEmpty: ").Append(_parameters.Parameterize("window_createEmpty", createEmpty)).Append(')');
             return this;
         }
 
@@ -89,28 +90,30 @@ namespace PW.FluxQueryNet
         public IFluxStream AggregateWindow(string aggregateFunction, FluxDuration every, FluxDuration? period = null, FluxDuration? offset = null,
             string? location = null, string? column = null, string? timeSrcColumn = null, string? timeDstColumn = null, bool createEmpty = true)
         {
+            // TODO: check that "aggregateFunction" only contains letters, digits and "_"
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("aggregateWindow(fn: ").Append(aggregateFunction).Append(", every: ").Append(every);
+            _stringBuilder.AppendPipe().Append("aggregateWindow(fn: ").Append(aggregateFunction)
+                .Append(", every: ").Append(_parameters.Parameterize("aggregateWindow_every", every));
 
             if (period != null)
-                _stringBuilder.Append(", period: ").Append(period);
+                _stringBuilder.Append(", period: ").Append(_parameters.Parameterize("aggregateWindow_period", period));
 
             if (offset != null)
-                _stringBuilder.Append(", offset: ").Append(offset);
+                _stringBuilder.Append(", offset: ").Append(_parameters.Parameterize("aggregateWindow_offset", offset));
 
             if (!string.IsNullOrWhiteSpace(location))
-                _stringBuilder.Append(", location: ").Append(location);
+                _stringBuilder.Append(", location: ").Append(location); // TODO: create and use a dedicated type
 
             if (!string.IsNullOrWhiteSpace(column))
-                _stringBuilder.Append(", column: \"").Append(column).Append('"');
+                _stringBuilder.Append(", column: ").Append(_parameters.Parameterize("aggregateWindow_column", column));
 
             if (!string.IsNullOrWhiteSpace(timeSrcColumn))
-                _stringBuilder.Append(", timeSrc: \"").Append(timeSrcColumn).Append('"');
+                _stringBuilder.Append(", timeSrc: ").Append(_parameters.Parameterize("aggregateWindow_timeSrc", timeSrcColumn));
 
             if (!string.IsNullOrWhiteSpace(timeDstColumn))
-                _stringBuilder.Append(", timeDst: \"").Append(timeDstColumn).Append('"');
+                _stringBuilder.Append(", timeDst: ").Append(_parameters.Parameterize("aggregateWindow_timeDst", timeDstColumn));
 
-            _stringBuilder.Append(", createEmpty: ").Append(createEmpty.ToFluxNotation()).Append(')');
+            _stringBuilder.Append(", createEmpty: ").Append(_parameters.Parameterize("aggregateWindow_createEmpty", createEmpty)).Append(')');
             return this;
         }
     }

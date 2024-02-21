@@ -7,7 +7,7 @@ namespace PW.FluxQueryNet.Extensions
         public static StringBuilder AppendPipe(this StringBuilder stringBuilder) => stringBuilder.Append("|> ");
 
         public static StringBuilder AppendStringArrayParameter(this StringBuilder stringBuilder,
-            string parameterName, string[] values, bool prefixComma = false)
+            string parameterName, string[] values, bool prefixComma = false) // TODO: parameterize string arrays
         {
             if (values == null || values.Length == 0)
                 return stringBuilder;

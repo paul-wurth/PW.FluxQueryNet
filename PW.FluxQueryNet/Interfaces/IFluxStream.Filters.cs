@@ -19,13 +19,13 @@ namespace PW.FluxQueryNet
         /// <para>Use a duration relative to <c>now()</c> (eg. <see cref="TimeSpan"/>, <see cref="Duration"/> or <see cref="Period"/>) or an absolute time
         /// (eg. <see cref="DateTime"/>, <see cref="DateTimeOffset"/>, <see cref="Instant"/>, <see cref="OffsetDateTime"/>, etc.).</para>
         /// </param>
-        /// <param name="end">
+        /// <param name="stop">
         /// <para>Latest time to include in results. Results exclude rows with <c>_time</c> values that match the specified stop time. Default is <c>now()</c>.</para>
         /// <para>Use a duration relative to <c>now()</c> (eg. <see cref="TimeSpan"/>, <see cref="Duration"/> or <see cref="Period"/>) or an absolute time
         /// (eg. <see cref="DateTime"/>, <see cref="DateTimeOffset"/>, <see cref="Instant"/>, <see cref="OffsetDateTime"/>, etc.).</para>
         /// </param>
         /// <seealso href="https://docs.influxdata.com/flux/latest/stdlib/universe/range/">range() function - InfluxDB documentation</seealso>
-        IFluxStream Range(FluxTimeable start, FluxTimeable? end = null);
+        IFluxStream Range(FluxTimeable start, FluxTimeable? stop = null);
 
         /// <summary>
         /// Filters data based on conditions defined in a predicate function.

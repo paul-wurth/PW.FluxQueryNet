@@ -20,7 +20,7 @@ namespace PW.FluxQueryNet.Parameterization
 
         internal ParametersManager(FluxBuilderOptions options) => _options = options;
 
-        public string Parameterize(string paramName, object? value)
+        public string Parameterize(string paramName, object? value) // TODO: check that "paramName" only contains letters, digits and "_"
         {
             if (value == null)
                 throw new ArgumentNullException(paramName, "Cannot parameterize a null value.");

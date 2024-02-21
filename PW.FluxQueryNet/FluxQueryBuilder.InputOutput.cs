@@ -9,7 +9,7 @@ namespace PW.FluxQueryNet
         /// <inheritdoc/>
         public IFluxStream From(string bucket)
         {
-            _stringBuilder.Append("from(bucket: \"").Append(bucket).Append("\")");
+            _stringBuilder.Append("from(bucket: ").Append(_parameters.Parameterize("from_bucket", bucket)).Append(')');
             return this;
         }
 
@@ -34,7 +34,7 @@ namespace PW.FluxQueryNet
             _stringBuilder.AppendPipe().Append("yield(");
 
             if (!string.IsNullOrWhiteSpace(name))
-                _stringBuilder.Append("name: \"").Append(name).Append('"');
+                _stringBuilder.Append("name: ").Append(_parameters.Parameterize("yield_name", name));
 
             _stringBuilder.Append(')');
             return this;

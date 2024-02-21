@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using PW.FluxQueryNet.Options;
+using PW.FluxQueryNet.Parameterization;
+using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace PW.FluxQueryNet
@@ -6,11 +9,15 @@ namespace PW.FluxQueryNet
     public class FluxFilter
     {
         private readonly StringBuilder _stringBuilder;
+        private readonly FluxBuilderOptions _options;
+        private readonly ParametersManager _parameters;
         private bool _firstCondition = true;
 
-        internal FluxFilter(StringBuilder stringBuilder)
+        internal FluxFilter(StringBuilder stringBuilder, FluxBuilderOptions options, ParametersManager parameters)
         {
             _stringBuilder = stringBuilder;
+            _options = options;
+            _parameters = parameters;
         }
 
         private void AppendAndIfNeeded()
@@ -22,14 +29,42 @@ namespace PW.FluxQueryNet
         }
 
         /// <summary>
-        /// Add conditions to the filter predicate with raw Flux.
+        /// <para>Add conditions to the filter predicate with raw Flux specified in the <paramref name="rawFluxFilters"/> interpolated string.</para>
+        /// <para>Records representing each row are passed as <c>r</c>.</para>
         /// </summary>
-        /// <remarks>Records representing each row are passed as <c>r</c>.</remarks>
-        /// <param name="filters">A raw Flux predicate (eg. <c>"r._value &gt; 0 and r._value &lt; 50"</c>).</param>
-        public FluxFilter Where(string filters)
+        /// <remarks>
+        /// This method provides a built-in mechanism to protect against Flux injection attacks.
+        /// Interpolated values in the <paramref name="rawFluxFilters"/> query string will be parameterized automatically.
+        /// </remarks>
+        /// <param name="rawFluxFilters">An interpolated string representing a raw Flux predicate (eg. <c>"r._value &gt; 0 and r._value &lt; 50"</c>).</param>
+        public FluxFilter Where(FormattableString rawFluxFilters)
         {
             AppendAndIfNeeded();
-            _stringBuilder.Append(filters);
+            _stringBuilder.Append(_parameters.Parameterize(rawFluxFilters, "filter_where"));
+
+            return this;
+        }
+
+        /// <summary>
+        /// <para>
+        /// Add conditions to the filter predicate with raw Flux returned by the <paramref name="rawFluxFiltersBuilder"/> function
+        /// (without built-in protection against Flux injection attacks).
+        /// </para>
+        /// <para>Records representing each row are passed as <c>r</c>.</para>
+        /// </summary>
+        /// <remarks>
+        /// To prevent Flux injection attacks, <b>never pass a concatenated or interpolated string</b> (<c>$""</c>) with
+        /// non-validated user-provided values into this method.<br/>Instead, use the <see cref="ParametersManager"/>
+        /// argument provided by <paramref name="rawFluxFiltersBuilder"/> to parameterize the values, as below:
+        /// <code>
+        /// WhereUnsafe(p => $"r._value == {p.Parameterize("val1", expectedValue)} or r._value == " + p.Parameterize("val2", fallbackValue))
+        /// </code>
+        /// </remarks>
+        /// <param name="rawFluxFiltersBuilder">A function that builds a string representing a raw Flux predicate (eg. <c>"r._value &gt; 0 and r._value &lt; 50"</c>).</param>
+        public FluxFilter WhereUnsafe(Func<ParametersManager, string> rawFluxFiltersBuilder)
+        {
+            AppendAndIfNeeded();
+            _stringBuilder.Append(rawFluxFiltersBuilder(_parameters));
 
             return this;
         }
@@ -41,7 +76,7 @@ namespace PW.FluxQueryNet
         public FluxFilter Measurement(string measurement)
         {
             AppendAndIfNeeded();
-            _stringBuilder.Append("r._measurement == \"").Append(measurement).Append('"');
+            _stringBuilder.Append("r._measurement == ").Append(_parameters.Parameterize("filter_measurement", measurement));
 
             return this;
         }
@@ -54,7 +89,12 @@ namespace PW.FluxQueryNet
         public FluxFilter Tag(string tagKey, string tagValue)
         {
             AppendAndIfNeeded();
-            _stringBuilder.Append("r[\"").Append(tagKey).Append("\"] == \"").Append(tagValue).Append('"');
+
+            // The Flux function "record.get()" is currently the only way to get a value from a record using a key specified with a variable.
+            // Unfortunately, "r[myVariable]" does not work. See https://github.com/influxdata/flux/issues/2510.
+            _stringBuilder.Append("record.get(r: r, key: ").Append(_parameters.Parameterize("filter_tagKey", tagKey)).Append(", default: \"\") == ")
+                .Append(_parameters.Parameterize("filter_tagValue", tagValue));
+            _options.ImportPackage(FluxPackages.Experimental_Record);
 
             return this;
         }
@@ -91,7 +131,7 @@ namespace PW.FluxQueryNet
                 if (i > 0)
                     _stringBuilder.Append(" or ");
 
-                _stringBuilder.Append("r._field == \"").Append(fields[i]).Append('"');
+                _stringBuilder.Append("r._field == ").Append(_parameters.Parameterize("filter_field", fields[i]));
             }
             _stringBuilder.Append(')');
 
