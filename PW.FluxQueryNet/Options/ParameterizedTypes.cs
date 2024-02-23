@@ -3,20 +3,21 @@
 namespace PW.FluxQueryNet.Options
 {
     [Flags]
-    public enum ParameterizedTypes : uint
+    public enum ParameterizedTypes : ushort
     {
-        None     = 0b00000000,  // 0
-        String   = 0b00000001,  // 1
-        Boolean  = 0b00000010,  // 2
-        Integer  = 0b00000100,  // 4
-        UInteger = 0b00001000,  // 8
-        Float    = 0b00010000,  // 16
-        Time     = 0b00100000,  // 32
-        Duration = 0b01000000,  // 64
-        Array    = 0b10000000,  // 128
+        None       = 0b000000000, // 0
+        Identifier = 0b000000001, // 1
+        String     = 0b000000010, // 2
+        Boolean    = 0b000000100, // 4
+        Integer    = 0b000001000, // 8
+        UInteger   = 0b000010000, // 16
+        Float      = 0b000100000, // 32
+        Time       = 0b001000000, // 64
+        Duration   = 0b010000000, // 128
+        Array      = 0b100000000, // 256
 
         Numeric = Integer | UInteger | Float,
-        All = String | Boolean | Numeric | Time | Duration | Array
+        All = Identifier | String | Boolean | Numeric | Time | Duration | Array
     }
 
     public static class ParameterizedTypesExtensions

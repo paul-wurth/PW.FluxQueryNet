@@ -5,22 +5,22 @@ namespace PW.FluxQueryNet
     public partial class FluxQueryBuilder
     {
         /// <inheritdoc/>
-        public IFluxStream First(string? column = null) => Aggregate("first", column);
+        public IFluxStream First(string? column = null) => AggregateCore("first", column);
 
         /// <inheritdoc/>
-        public IFluxStream Last(string? column = null) => Aggregate("last", column);
+        public IFluxStream Last(string? column = null) => AggregateCore("last", column);
 
         /// <inheritdoc/>
-        public IFluxStream Unique(string? column = null) => Aggregate("unique", column);
+        public IFluxStream Unique(string? column = null) => AggregateCore("unique", column);
 
         /// <inheritdoc/>
-        public IFluxStream Distinct(string? column = null) => Aggregate("distinct", column);
+        public IFluxStream Distinct(string? column = null) => AggregateCore("distinct", column);
 
         /// <inheritdoc/>
-        public IFluxStream Min(string? column = null) => Aggregate("min", column);
+        public IFluxStream Min(string? column = null) => AggregateCore("min", column);
 
         /// <inheritdoc/>
-        public IFluxStream Max(string? column = null) => Aggregate("max", column);
+        public IFluxStream Max(string? column = null) => AggregateCore("max", column);
 
         /// <inheritdoc/>
         public IFluxStream Top(int n, params string[] columns)

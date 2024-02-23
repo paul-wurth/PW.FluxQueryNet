@@ -6,27 +6,29 @@ namespace PW.FluxQueryNet
     public partial class FluxQueryBuilder
     {
         /// <inheritdoc/>
-        public IFluxStream Aggregate(string methodName, string? column = null)
+        public IFluxStream Aggregate(FluxIdentifier function, string? column = null) =>
+            AggregateCore("aggregate", column, _parameters.Parameterize("aggregate_fn", function));
+
+        private IFluxStream AggregateCore(string trustedFunctionName, string? column, string? parameterizedFunction = null)
         {
-            // TODO: check that "methodName" only contains letters, digits and "_"
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append(methodName).Append('(');
+            _stringBuilder.AppendPipe().Append(parameterizedFunction ?? trustedFunctionName).Append('(');
 
             if (!string.IsNullOrWhiteSpace(column))
-                _stringBuilder.Append("column: ").Append(_parameters.Parameterize(methodName + "_column", column));
+                _stringBuilder.Append("column: ").Append(_parameters.Parameterize(trustedFunctionName + "_column", column));
 
             _stringBuilder.Append(')');
             return this;
         }
 
         /// <inheritdoc/>
-        public IFluxStream Sum(string? column = null) => Aggregate("sum", column);
+        public IFluxStream Sum(string? column = null) => AggregateCore("sum", column);
 
         /// <inheritdoc/>
-        public IFluxStream Count(string? column = null) => Aggregate("count", column);
+        public IFluxStream Count(string? column = null) => AggregateCore("count", column);
 
         /// <inheritdoc/>
-        public IFluxStream Mean(string? column = null) => Aggregate("mean", column);
+        public IFluxStream Mean(string? column = null) => AggregateCore("mean", column);
 
         /// <inheritdoc/>
         public IFluxStream MovingAverage(int n)
@@ -51,10 +53,10 @@ namespace PW.FluxQueryNet
         }
 
         /// <inheritdoc/>
-        public IFluxStream Mode(string? column = null) => Aggregate("mode", column);
+        public IFluxStream Mode(string? column = null) => AggregateCore("mode", column);
 
         /// <inheritdoc/>
-        public IFluxStream Spread(string? column = null) => Aggregate("spread", column);
+        public IFluxStream Spread(string? column = null) => AggregateCore("spread", column);
 
 
         /// <inheritdoc/>
@@ -87,12 +89,11 @@ namespace PW.FluxQueryNet
         }
 
         /// <inheritdoc/>
-        public IFluxStream AggregateWindow(string aggregateFunction, FluxDuration every, FluxDuration? period = null, FluxDuration? offset = null,
+        public IFluxStream AggregateWindow(FluxIdentifier aggregateFunction, FluxDuration every, FluxDuration? period = null, FluxDuration? offset = null,
             string? location = null, string? column = null, string? timeSrcColumn = null, string? timeDstColumn = null, bool createEmpty = true)
         {
-            // TODO: check that "aggregateFunction" only contains letters, digits and "_"
             _stringBuilder.AppendLine();
-            _stringBuilder.AppendPipe().Append("aggregateWindow(fn: ").Append(aggregateFunction)
+            _stringBuilder.AppendPipe().Append("aggregateWindow(fn: ").Append(_parameters.Parameterize("aggregateWindow_fn", aggregateFunction))
                 .Append(", every: ").Append(_parameters.Parameterize("aggregateWindow_every", every));
 
             if (period != null)

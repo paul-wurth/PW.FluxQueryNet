@@ -5,11 +5,11 @@ namespace PW.FluxQueryNet
     public partial interface IFluxStream
     {
         /// <summary>
-        /// Returns the result of the Flux function specified by <paramref name="methodName"/>.
+        /// Returns the result of the Flux function specified by <paramref name="function"/>.
         /// </summary>
-        /// <param name="methodName">Name of the Flux function.</param>
+        /// <param name="function">Identifier of the Flux function.</param>
         /// <param name="column">Column to operate on.</param>
-        IFluxStream Aggregate(string methodName, string? column = null);
+        IFluxStream Aggregate(FluxIdentifier function, string? column = null);
 
         /// <summary>
         /// Returns the sum of non-<see langword="null"/> values in a specified <paramref name="column"/>.
@@ -112,7 +112,7 @@ namespace PW.FluxQueryNet
         /// When <see langword="true"/>, aggregate functions return empty tables, but selector functions do not. By design, selectors drop empty tables.
         /// </param>
         /// <seealso href="https://docs.influxdata.com/flux/latest/stdlib/universe/aggregatewindow/">aggregateWindow() function - InfluxDB documentation</seealso>
-        IFluxStream AggregateWindow(string aggregateFunction, FluxDuration every, FluxDuration? period = null, FluxDuration? offset = null,
+        IFluxStream AggregateWindow(FluxIdentifier aggregateFunction, FluxDuration every, FluxDuration? period = null, FluxDuration? offset = null,
             string? location = null, string? column = null, string? timeSrcColumn = null, string? timeDstColumn = null, bool createEmpty = true);
     }
 }

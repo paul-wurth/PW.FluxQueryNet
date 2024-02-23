@@ -47,6 +47,7 @@ namespace PW.FluxQueryNet.Parameterization
             FluxTime or DateTime or DateTimeOffset or Instant or ZonedDateTime or
                 OffsetDateTime or OffsetDate or LocalDateTime or LocalDate => p.IsSet(ParameterizedTypes.Time),
             FluxDuration or TimeSpan or Duration or Period => p.IsSet(ParameterizedTypes.Duration),
+            FluxIdentifier => p.IsSet(ParameterizedTypes.Identifier),
             string => p.IsSet(ParameterizedTypes.String),
             IEnumerable => p.IsSet(ParameterizedTypes.Array),
             _ => true
