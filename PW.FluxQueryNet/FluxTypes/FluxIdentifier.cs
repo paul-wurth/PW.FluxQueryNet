@@ -11,7 +11,7 @@ namespace PW.FluxQueryNet.FluxTypes
     /// This can be obtained by instantiating it or with the implicit conversion of a <see cref="string"/>.
     /// </remarks>
     /// <seealso href="https://docs.influxdata.com/flux/latest/spec/lexical-elements/#identifiers">Identifier - InfluxDB documentation</seealso>
-    public sealed class FluxIdentifier : IFluxType
+    public sealed class FluxIdentifier : IFluxType, IEquatable<FluxIdentifier>
     {
         private readonly string _value;
 
@@ -27,7 +27,9 @@ namespace PW.FluxQueryNet.FluxTypes
 
         public string ToFluxNotation() => _value;
 
-        public Expression ToFluxAstNode() => new Identifier(nameof(Identifier), _value);
+        Expression IFluxType.ToFluxAstNode() => ToFluxAstNode();
+
+        public Identifier ToFluxAstNode() => new(nameof(Identifier), _value);
 
         private static void ValidateIdentifier(string identifier)
         {
@@ -54,5 +56,12 @@ namespace PW.FluxQueryNet.FluxTypes
                     throw new ArgumentException($"The Flux identifier \"{identifier}\" cannot contain the character \"{c}\": only letters, digits and underscores are valid.", nameof(identifier));
             }
         }
+
+
+        public bool Equals(FluxIdentifier? other) => other != null && _value == other._value;
+
+        public override bool Equals(object? obj) => Equals(obj as FluxIdentifier);
+
+        public override int GetHashCode() => HashCode.Combine(_value);
     }
 }

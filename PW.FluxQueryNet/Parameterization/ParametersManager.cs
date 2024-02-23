@@ -16,15 +16,18 @@ namespace PW.FluxQueryNet.Parameterization
     {
         private const string Prefix = "params";
 
-        private readonly Dictionary<string, object> _parameters = new();
+        private readonly Dictionary<FluxIdentifier, object> _parameters = new();
         private readonly FluxBuilderOptions _options;
 
         internal ParametersManager(FluxBuilderOptions options) => _options = options;
 
-        public string Parameterize(string paramName, object? value) // TODO: check that "paramName" only contains letters, digits and "_"
+        public string Parameterize(string paramName, object? value)
         {
+            if (paramName == null)
+                throw new ArgumentNullException(nameof(paramName), "A parameter name is required to parameterize a value.");
+
             if (value == null)
-                throw new ArgumentNullException(paramName, "Cannot parameterize a null value.");
+                throw new ArgumentNullException(nameof(value), $"Cannot parameterize a null value for the \"{paramName}\" parameter.");
 
             if (!ShouldParameterize(value, _options.ParameterizedTypes))
                 return value.ToFluxNotation();
@@ -74,7 +77,7 @@ namespace PW.FluxQueryNet.Parameterization
             var stringBuilder = new StringBuilder("option ").Append(Prefix).AppendLine(" = {");
             foreach (var p in _parameters)
             {
-                stringBuilder.Append("  ").Append(p.Key).Append(": ").Append(p.Value.ToFluxNotation()).AppendLine(",");
+                stringBuilder.Append("  ").Append(p.Key.ToFluxNotation()).Append(": ").Append(p.Value.ToFluxNotation()).AppendLine(",");
             }
             stringBuilder.AppendLine("}").AppendLine();
 
@@ -87,9 +90,9 @@ namespace PW.FluxQueryNet.Parameterization
                 return null;
 
             var paramsProperties = _parameters
-                .Select(kvp => new Property(nameof(Property),
-                    key: new Identifier(nameof(Identifier), kvp.Key),
-                    value: kvp.Value.ToFluxAstNode()
+                .Select(p => new Property(nameof(Property),
+                    key: p.Key.ToFluxAstNode(),
+                    value: p.Value.ToFluxAstNode()
                 ))
                 .ToList();
 

@@ -58,7 +58,7 @@ namespace PW.FluxQueryNet.FluxTypes.Converters
                 [
                     new Property(nameof(Property),
                         key: new Identifier(nameof(Identifier), "v"),
-                        value: new StringLiteral(nameof(StringLiteral), value)
+                        value: value.ToFluxAstNode()
                     )
                 ])
             ]);

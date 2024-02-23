@@ -1,4 +1,5 @@
 ﻿using InfluxDB.Client.Api.Domain;
+using PW.FluxQueryNet.FluxTypes;
 using PW.FluxQueryNet.FluxTypes.Converters;
 using System;
 
@@ -11,9 +12,9 @@ namespace PW.FluxQueryNet
     public sealed class FluxPackageImport : IEquatable<FluxPackageImport>
     {
         public string Package { get; }
-        public string? Alias { get; }
+        public FluxIdentifier? Alias { get; }
 
-        public FluxPackageImport(string package, string? alias = null)
+        public FluxPackageImport(string package, FluxIdentifier? alias = null)
         {
             Package = package;
             Alias = alias;
@@ -23,37 +24,19 @@ namespace PW.FluxQueryNet
 
         public override string ToString() => ToFluxNotation();
 
-        public string ToFluxNotation() => $"import {Alias} {Package.ToFluxNotation()}";
+        public string ToFluxNotation() => Alias == null
+            ? $"import {Package.ToFluxNotation()}"
+            : $"import {Alias.ToFluxNotation()} {Package.ToFluxNotation()}";
 
         public ImportDeclaration ToFluxAstNode() => new(nameof(ImportDeclaration),
-            _as: Alias == null ? null : new(nameof(Identifier), Alias),
+            _as: Alias?.ToFluxAstNode(),
             path: Package.ToFluxAstNode());
 
 
-        public bool Equals(FluxPackageImport? other)
-        {
-            if (other == null)
-                return false;
-
-            return Package == other.Package && Alias == other.Alias;
-        }
+        public bool Equals(FluxPackageImport? other) => other != null && Package == other.Package && Equals(Alias, other.Alias);
 
         public override bool Equals(object? obj) => Equals(obj as FluxPackageImport);
 
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                var hashCode = 17;
-
-                if (Package != null)
-                    hashCode = hashCode * 59 + Package.GetHashCode();
-
-                if (Alias != null)
-                    hashCode = hashCode * 59 + Alias.GetHashCode();
-
-                return hashCode;
-            }
-        }
+        public override int GetHashCode() => HashCode.Combine(Package, Alias);
     }
 }
