@@ -2,6 +2,7 @@
 using NodaTime;
 using PW.FluxQueryNet.FluxTypes.Converters;
 using System;
+using System.Collections.Generic;
 using Duration = NodaTime.Duration;
 
 namespace PW.FluxQueryNet.FluxTypes
@@ -24,7 +25,7 @@ namespace PW.FluxQueryNet.FluxTypes
 
         public abstract Expression ToFluxAstNode();
 
-        public virtual FluxPackageImport? GetPackageImport() => null;
+        public virtual IEnumerable<FluxPackageImport>? GetPackageImports() => null;
 
 
         public static implicit operator FluxTimeable(DateTime value) => value.AsFluxTime();

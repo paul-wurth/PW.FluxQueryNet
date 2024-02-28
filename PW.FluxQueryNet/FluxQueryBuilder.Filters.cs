@@ -11,12 +11,12 @@ namespace PW.FluxQueryNet
         {
             _stringBuilder.AppendLine();
             _stringBuilder.AppendPipe().Append("range(start: ").Append(_parameters.Parameterize("range_start", start));
-            _options.ImportPackage(start.GetPackageImport());
+            _options.ImportPackages(start.GetPackageImports());
 
             if (stop != null)
             {
                 _stringBuilder.Append(", stop: ").Append(_parameters.Parameterize("range_stop", stop));
-                _options.ImportPackage(stop.GetPackageImport());
+                _options.ImportPackages(stop.GetPackageImports());
             }
 
             _stringBuilder.Append(')');

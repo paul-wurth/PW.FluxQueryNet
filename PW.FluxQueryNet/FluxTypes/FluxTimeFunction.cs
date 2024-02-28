@@ -1,5 +1,6 @@
 ﻿using InfluxDB.Client.Api.Domain;
 using System;
+using System.Collections.Generic;
 
 namespace PW.FluxQueryNet.FluxTypes
 {
@@ -9,12 +10,12 @@ namespace PW.FluxQueryNet.FluxTypes
     public sealed class FluxTimeFunction : FluxTimeable
     {
         private readonly string _value;
-        private readonly FluxPackageImport? _import;
+        private readonly IEnumerable<FluxPackageImport>? _imports;
 
-        private FluxTimeFunction(string value, FluxPackageImport? import = null)
+        private FluxTimeFunction(string value, IEnumerable<FluxPackageImport>? imports = null)
         {
             _value = value;
-            _import = import;
+            _imports = imports;
         }
 
         public override string ToString() => ToFluxNotation();
@@ -23,7 +24,7 @@ namespace PW.FluxQueryNet.FluxTypes
 
         public override Expression ToFluxAstNode() => throw new NotSupportedException("Generating a Flux AST for time functions is not yet supported and not urgent since there is no risk of Flux injection (as functions are not user-defined)"); // TODO
 
-        public override FluxPackageImport? GetPackageImport() => _import;
+        public override IEnumerable<FluxPackageImport>? GetPackageImports() => _imports;
 
 
         /// <summary>
@@ -43,18 +44,24 @@ namespace PW.FluxQueryNet.FluxTypes
         /// Returns the current system time at which this function is executed.
         /// </summary>
         /// <seealso href="https://docs.influxdata.com/flux/latest/stdlib/system/time/">system.time() function - InfluxDB documentation</seealso>
-        public static readonly FluxTimeFunction SystemTime = new("system.time()", FluxPackages.System);
+        public static readonly FluxTimeFunction SystemTime = new("system.time()", [FluxPackages.System]);
 
         /// <summary>
-        /// Returns the earliest time InfluxDB can represent.
+        /// Returns the earliest time InfluxDB can store a value.
         /// </summary>
         /// <seealso href="https://docs.influxdata.com/flux/latest/stdlib/internal/influxql/#constants">Constants - InfluxDB documentation</seealso>
-        public static readonly FluxTimeFunction MinValue = new("influxql.minTime", FluxPackages.Internal_InfluxQL);
+        public static readonly FluxTimeFunction MinValue = new("influxql.minTime", [FluxPackages.Internal_InfluxQL]);
 
         /// <summary>
-        /// Returns the latest time InfluxDB can represent.
+        /// Returns the latest time InfluxDB can store a value.
         /// </summary>
         /// <seealso href="https://docs.influxdata.com/flux/latest/stdlib/internal/influxql/#constants">Constants - InfluxDB documentation</seealso>
-        public static readonly FluxTimeFunction MaxValue = new("influxql.maxTime", FluxPackages.Internal_InfluxQL);
+        public static readonly FluxTimeFunction MaxStorageValue = new("influxql.maxTime", [FluxPackages.Internal_InfluxQL]);
+
+        /// <summary>
+        /// <para>Returns the time immediately after <see cref="MaxStorageValue"/>, which is the latest time InfluxDB can store a value.</para>
+        /// <para>This is useful to cover the complete time range for functions with an exclusive stop/end time.</para>
+        /// </summary>
+        public static readonly FluxTimeFunction MaxRangeValue = new("date.add(d: 1ns, to: influxql.maxTime)", [FluxPackages.Internal_InfluxQL, FluxPackages.Date]);
     }
 }

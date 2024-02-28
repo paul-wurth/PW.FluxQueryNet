@@ -1,5 +1,4 @@
 ﻿using InfluxDB.Client.Api.Domain;
-using PW.FluxQueryNet.Extensions;
 using PW.FluxQueryNet.FluxTypes.Converters;
 using System;
 using System.Collections.Generic;
@@ -32,10 +31,22 @@ namespace PW.FluxQueryNet.Options
 
         public FluxBuilderOptions ImportPackage(FluxPackageImport? packageImport)
         {
-            _packageImports.AddIfNotNull(packageImport);
+            if (packageImport != null)
+                _packageImports.Add(packageImport);
+
             return this;
         }
 
+        public FluxBuilderOptions ImportPackages(IEnumerable<FluxPackageImport>? packageImports)
+        {
+            if (packageImports != null)
+            {
+                foreach (var packageImport in packageImports)
+                    _packageImports.Add(packageImport);
+            }
+
+            return this;
+        }
 
         internal string? GetNowAsFluxNotation()
         {
