@@ -61,7 +61,7 @@ namespace PW.FluxQueryNet
 
         /// <inheritdoc/>
         public IFluxStream Window(FluxDuration every, FluxDuration? period = null, FluxDuration? offset = null,
-            string? location = null, string? timeColumn = null, string? startColumn = null, string? stopColumn = null, bool createEmpty = false)
+            FluxLocation? location = null, string? timeColumn = null, string? startColumn = null, string? stopColumn = null, bool createEmpty = false)
         {
             _stringBuilder.AppendLine();
             _stringBuilder.AppendPipe().Append("window(every: ").Append(_parameters.Parameterize("window_every", every));
@@ -72,8 +72,8 @@ namespace PW.FluxQueryNet
             if (offset != null)
                 _stringBuilder.Append(", offset: ").Append(_parameters.Parameterize("window_offset", offset));
 
-            if (!string.IsNullOrWhiteSpace(location))
-                _stringBuilder.Append(", location: ").Append(location); // TODO: create and use a dedicated type
+            if (location != null)
+                _stringBuilder.Append(", location: ").Append(_parameters.Parameterize("window_location", location));
 
             if (!string.IsNullOrWhiteSpace(timeColumn))
                 _stringBuilder.Append(", timeColumn: ").Append(_parameters.Parameterize("window_timeColumn", timeColumn));
@@ -90,7 +90,7 @@ namespace PW.FluxQueryNet
 
         /// <inheritdoc/>
         public IFluxStream AggregateWindow(FluxIdentifier aggregateFunction, FluxDuration every, FluxDuration? period = null, FluxDuration? offset = null,
-            string? location = null, string? column = null, string? timeSrcColumn = null, string? timeDstColumn = null, bool createEmpty = true)
+            FluxLocation? location = null, string? column = null, string? timeSrcColumn = null, string? timeDstColumn = null, bool createEmpty = true)
         {
             _stringBuilder.AppendLine();
             _stringBuilder.AppendPipe().Append("aggregateWindow(fn: ").Append(_parameters.Parameterize("aggregateWindow_fn", aggregateFunction))
@@ -102,8 +102,8 @@ namespace PW.FluxQueryNet
             if (offset != null)
                 _stringBuilder.Append(", offset: ").Append(_parameters.Parameterize("aggregateWindow_offset", offset));
 
-            if (!string.IsNullOrWhiteSpace(location))
-                _stringBuilder.Append(", location: ").Append(location); // TODO: create and use a dedicated type
+            if (location != null)
+                _stringBuilder.Append(", location: ").Append(_parameters.Parameterize("aggregateWindow_location", location));
 
             if (!string.IsNullOrWhiteSpace(column))
                 _stringBuilder.Append(", column: ").Append(_parameters.Parameterize("aggregateWindow_column", column));

@@ -94,7 +94,7 @@ namespace PW.FluxQueryNet
         /// <param name="createEmpty">Create empty tables for empty window. Default is <see langword="false"/>.</param>
         /// <seealso href="https://docs.influxdata.com/flux/latest/stdlib/universe/window/">window() function - InfluxDB documentation</seealso>
         IFluxStream Window(FluxDuration every, FluxDuration? period = null, FluxDuration? offset = null,
-            string? location = null, string? timeColumn = null, string? startColumn = null, string? stopColumn = null, bool createEmpty = false);
+            FluxLocation? location = null, string? timeColumn = null, string? startColumn = null, string? stopColumn = null, bool createEmpty = false);
 
         /// <summary>
         /// Downsamples data by grouping data into fixed windows of time and applying an aggregate or selector function to each window.
@@ -113,6 +113,6 @@ namespace PW.FluxQueryNet
         /// </param>
         /// <seealso href="https://docs.influxdata.com/flux/latest/stdlib/universe/aggregatewindow/">aggregateWindow() function - InfluxDB documentation</seealso>
         IFluxStream AggregateWindow(FluxIdentifier aggregateFunction, FluxDuration every, FluxDuration? period = null, FluxDuration? offset = null,
-            string? location = null, string? column = null, string? timeSrcColumn = null, string? timeDstColumn = null, bool createEmpty = true);
+            FluxLocation? location = null, string? column = null, string? timeSrcColumn = null, string? timeDstColumn = null, bool createEmpty = true);
     }
 }
