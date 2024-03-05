@@ -8,7 +8,7 @@ using System.Text;
 
 namespace PW.FluxQueryNet
 {
-    public partial class FluxQueryBuilder : IFluxSource, IFluxStream
+    public partial class FluxQueryBuilder : IFluxConfigurable, IFluxSource, IFluxStream
     {
         private readonly StringBuilder _stringBuilder = new();
         private readonly FluxBuilderOptions _options;
@@ -38,6 +38,14 @@ namespace PW.FluxQueryNet
         {
             _stringBuilder.AppendLine();
             _stringBuilder.AppendPipe().Append(rawFluxBuilder(_parameters));
+            return this;
+        }
+
+
+        /// <inheritdoc/>
+        public IFluxStream Configure(Action<FluxBuilderOptions> configureAction)
+        {
+            configureAction(_options);
             return this;
         }
 

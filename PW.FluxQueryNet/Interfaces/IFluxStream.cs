@@ -4,7 +4,7 @@ using System;
 
 namespace PW.FluxQueryNet
 {
-    public partial interface IFluxStream
+    public partial interface IFluxStream : IFluxConfigurable
     {
         /// <summary>
         /// Performs an operation specified in the <paramref name="rawFlux"/> interpolated string, on the piped data stream.
