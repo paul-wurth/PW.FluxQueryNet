@@ -26,7 +26,7 @@ namespace PW.FluxQueryNet.FluxTypes
 
         public override bool CanConvertToFluxAstNode => false;
 
-        public override IEnumerable<FluxPackageImport>? GetPackageImports() => _imports;
+        public override IEnumerable<FluxPackageImport>? DependentPackageImports => _imports;
 
 
         /// <summary>

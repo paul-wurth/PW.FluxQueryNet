@@ -27,7 +27,7 @@ namespace PW.FluxQueryNet.FluxTypes
 
         public virtual bool CanConvertToFluxAstNode => true;
 
-        public virtual IEnumerable<FluxPackageImport>? GetPackageImports() => null;
+        public virtual IEnumerable<FluxPackageImport>? DependentPackageImports => null;
 
 
         public static implicit operator FluxTimeable(DateTime value) => value.AsFluxTime();
