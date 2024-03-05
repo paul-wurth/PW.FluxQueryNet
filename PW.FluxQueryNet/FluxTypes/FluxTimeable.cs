@@ -25,6 +25,8 @@ namespace PW.FluxQueryNet.FluxTypes
 
         public abstract Expression ToFluxAstNode();
 
+        public virtual bool CanConvertToFluxAstNode => true;
+
         public virtual IEnumerable<FluxPackageImport>? GetPackageImports() => null;
 
 

@@ -53,7 +53,7 @@ namespace PW.FluxQueryNet.Parameterization
             FluxIdentifier => p.IsSet(ParameterizedTypes.Identifier),
             string => p.IsSet(ParameterizedTypes.String),
             IEnumerable => p.IsSet(ParameterizedTypes.Array),
-            FluxLocation => p.IsSet(ParameterizedTypes.Object),
+            IFluxType t => p.IsSet(ParameterizedTypes.Object) && t.CanConvertToFluxAstNode,
             _ => true
         };
 
