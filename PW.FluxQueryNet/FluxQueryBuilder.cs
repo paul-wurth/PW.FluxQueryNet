@@ -46,10 +46,12 @@ namespace PW.FluxQueryNet
         {
             var parametersStatement = _parameters.GetParametersAsFluxAst();
 
+            // Workaround: import packages in Flux notation as the AST representation in the "imports" property seems to be ignored.
+            // See https://github.com/influxdata/influxdb/issues/24734.
             return new Query(
-                query: _stringBuilder.ToString(),
+                query: _options.GetImportsAsFluxNotation() + _stringBuilder.ToString(),
                 _extern: new(nameof(File),
-                    imports: _options.GetImportsAsFluxAst(),
+                    imports: [], //_options.GetImportsAsFluxAst(),
                     body: parametersStatement == null ? [] : [parametersStatement]
                 ),
                 type: Query.TypeEnum.Flux,
