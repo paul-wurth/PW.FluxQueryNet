@@ -8,7 +8,7 @@ using System.Text;
 
 namespace PW.FluxQueryNet
 {
-    public partial class FluxQueryBuilder : IFluxSource, IFluxStream
+    public partial class FluxQueryBuilder : IFluxBuilder, IFluxConfigurable, IFluxSource, IFluxStream
     {
         private readonly StringBuilder _stringBuilder = new();
         private readonly FluxBuilderOptions _options;
@@ -41,15 +41,25 @@ namespace PW.FluxQueryNet
             return this;
         }
 
+
+        /// <inheritdoc/>
+        public IFluxStream Configure(Action<FluxBuilderOptions> configureAction)
+        {
+            configureAction(_options);
+            return this;
+        }
+
         /// <inheritdoc/>
         public Query ToQuery(Dialect? dialect = null)
         {
             var parametersStatement = _parameters.GetParametersAsFluxAst();
 
+            // Workaround: import packages in Flux notation as the AST representation in the "imports" property seems to be ignored.
+            // See https://github.com/influxdata/influxdb/issues/24734.
             return new Query(
-                query: _stringBuilder.ToString(),
+                query: _options.GetImportsAsFluxNotation() + _stringBuilder.ToString(),
                 _extern: new(nameof(File),
-                    imports: _options.GetImportsAsFluxAst(),
+                    imports: [], //_options.GetImportsAsFluxAst(),
                     body: parametersStatement == null ? [] : [parametersStatement]
                 ),
                 type: Query.TypeEnum.Flux,

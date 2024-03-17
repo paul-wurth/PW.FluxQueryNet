@@ -1,10 +1,9 @@
-﻿using InfluxDB.Client.Api.Domain;
-using PW.FluxQueryNet.Parameterization;
+﻿using PW.FluxQueryNet.Parameterization;
 using System;
 
 namespace PW.FluxQueryNet
 {
-    public partial interface IFluxStream
+    public partial interface IFluxStream : IFluxConfigurable, IFluxBuilder
     {
         /// <summary>
         /// Performs an operation specified in the <paramref name="rawFlux"/> interpolated string, on the piped data stream.
@@ -41,19 +40,5 @@ namespace PW.FluxQueryNet
         /// <param name="name">Unique name for the yielded results. Default is <c>_results</c>.</param>
         /// <seealso href="https://docs.influxdata.com/flux/latest/stdlib/universe/yield/">yield() function - InfluxDB documentation</seealso>
         IFluxStream Yield(string? name = null);
-
-        /// <summary>
-        /// Returns a <see cref="Query"/> that contains the generated Flux query, its parameters, imports and the value of <c>now()</c>.
-        /// </summary>
-        /// <param name="dialect">Options for tabular data output. Default output is <see href="https://docs.influxdata.com/influxdb/latest/reference/syntax/annotated-csv/">annotated CSV</see> with headers.</param>
-        Query ToQuery(Dialect? dialect = null);
-
-        /// <summary>
-        /// Returns a string representation of the generated Flux query, its parameters, imports and the value of <c>now()</c>.
-        /// </summary>
-        /// <remarks>
-        /// This string is <b>not suitable for direct execution</b> and is intended <b>only for use in debugging</b>.
-        /// </remarks>
-        string ToDebugQueryString();
     }
 }

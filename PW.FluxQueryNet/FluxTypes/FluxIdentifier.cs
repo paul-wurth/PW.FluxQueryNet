@@ -31,6 +31,8 @@ namespace PW.FluxQueryNet.FluxTypes
 
         public Identifier ToFluxAstNode() => new(nameof(Identifier), _value);
 
+        public bool CanConvertToFluxAstNode => true;
+
         private static void ValidateIdentifier(string identifier)
         {
             // According to the Flux identifier specification (https://docs.influxdata.com/flux/latest/spec/lexical-elements/#identifiers

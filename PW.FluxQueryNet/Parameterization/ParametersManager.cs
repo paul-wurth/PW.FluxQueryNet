@@ -29,6 +29,9 @@ namespace PW.FluxQueryNet.Parameterization
             if (value == null)
                 throw new ArgumentNullException(nameof(value), $"Cannot parameterize a null value for the \"{paramName}\" parameter.");
 
+            if (value is FluxTimeable timeable)
+                _options.ImportPackages(timeable.DependentPackageImports);
+
             if (!ShouldParameterize(value, _options.ParameterizedTypes))
                 return value.ToFluxNotation();
 
@@ -53,7 +56,7 @@ namespace PW.FluxQueryNet.Parameterization
             FluxIdentifier => p.IsSet(ParameterizedTypes.Identifier),
             string => p.IsSet(ParameterizedTypes.String),
             IEnumerable => p.IsSet(ParameterizedTypes.Array),
-            FluxLocation => p.IsSet(ParameterizedTypes.Object),
+            IFluxType t => p.IsSet(ParameterizedTypes.Object) && t.CanConvertToFluxAstNode,
             _ => true
         };
 

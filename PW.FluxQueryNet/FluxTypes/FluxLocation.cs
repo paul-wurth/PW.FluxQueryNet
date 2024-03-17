@@ -35,5 +35,7 @@ namespace PW.FluxQueryNet.FluxTypes
                     value: _offset.ToFluxAstNode()
                 )
             ]);
+
+        public bool CanConvertToFluxAstNode => true;
     }
 }

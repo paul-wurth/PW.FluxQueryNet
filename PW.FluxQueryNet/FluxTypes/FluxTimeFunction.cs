@@ -24,7 +24,9 @@ namespace PW.FluxQueryNet.FluxTypes
 
         public override Expression ToFluxAstNode() => throw new NotSupportedException("Generating a Flux AST for time functions is not yet supported and not urgent since there is no risk of Flux injection (as functions are not user-defined)"); // TODO
 
-        public override IEnumerable<FluxPackageImport>? GetPackageImports() => _imports;
+        public override bool CanConvertToFluxAstNode => false;
+
+        public override IEnumerable<FluxPackageImport>? DependentPackageImports => _imports;
 
 
         /// <summary>

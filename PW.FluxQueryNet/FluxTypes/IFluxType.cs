@@ -7,5 +7,7 @@ namespace PW.FluxQueryNet.FluxTypes
         string ToFluxNotation();
 
         Expression ToFluxAstNode();
+
+        bool CanConvertToFluxAstNode { get; }
     }
 }
